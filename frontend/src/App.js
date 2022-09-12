@@ -1,4 +1,5 @@
-import {BrowserRouter as Router, Routes, Route, Navigate} from "react-router-dom";
+import {BrowserRouter as Router, Routes, Route, Navigate, BrowserRouter} from "react-router-dom";
+import DifficultySelection from './components/DifficultySelection';
 import SignupPage from './components/SignupPage';
 import {Box} from "@mui/material";
 
@@ -10,6 +11,7 @@ function App() {
                     <Routes>
                         <Route exact path="/" element={<Navigate replace to="/signup" />}></Route>
                         <Route path="/signup" element={<SignupPage/>}/>
+                        <Route path="/difficulty" element={<DifficultySelection />}/>
                     </Routes>
                 </Router>
             </Box>
