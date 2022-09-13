@@ -1,5 +1,5 @@
 import { createUser, isUser } from './repository.js';
-import {STATUS_CODE_CONFLICT, STATUS_CODE_CREATED} from "../constants";
+import {STATUS_CODE_CONFLICT} from "../constants.js";
 
 //need to separate orm functions from repository to decouple business logic from persistence
 export async function ormCreateUser(username, password) {
