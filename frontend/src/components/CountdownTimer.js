@@ -3,11 +3,10 @@ import {
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import socket from '../socket.js';
-import { startMatching } from "../utils/matching-helper.js"
+import ArrowBack from '@mui/icons-material/ArrowBack';
 
 function CountdownTimer({ targetTime, showTimer }) {
     const [remainingTime, setRemainingTime] = useState(targetTime)
-    const [isMatchSuccess, setMatchSuccess] = useState(false)
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -21,33 +20,31 @@ function CountdownTimer({ targetTime, showTimer }) {
             // on matchFail: restart matching process
             // display match fail notification
             if (eventName === "matchFail") {
-                setMatchSuccess(false);
             }
 
             // on matchSuccess: redirect both users to their room
             // display match success notification
             else if (eventName === "matchSuccess") {
-                setMatchSuccess(true);
-                console.log("match success!")
-                console.log(args)
             } 
 
             else if (eventName === "matchPending") {
-                console.log("waiting for match...")
-                console.log(args)
             }
         }, [])
     });
 
+    const cancelMatching = () => {
+        socket.emit("timeout");
+        showTimer(false)
+    }
+
     if (remainingTime <= 0) {
         socket.emit("timeout");
-
         return (
             <Stack direction="column"
             justifyContent="center"
             alignItems="center">
-                <Typography sx={{ fontWeight: '500' }} marginBottom={"2rem"} color="red">No match found! Go back!</Typography>
-                <Button variant="contained" color="success" type="submit" size="large" onClick={() => showTimer(false)}>Match!</Button>
+                <Typography sx={{ fontWeight: '500' }} marginBottom={"2rem"} color="red">No match found! Try again in a few minutes!</Typography>
+                <Button variant="contained" color="secondary" type="submit" size="large" onClick={() => showTimer(false)} startIcon={<ArrowBack />}>Back</Button>
             </Stack>
         )
     } else {
@@ -56,7 +53,7 @@ function CountdownTimer({ targetTime, showTimer }) {
                 justifyContent="center"
                 alignItems="center">
                 <Typography sx={{ fontWeight: '500' }} marginBottom={"2rem"}>Time Remaining: {remainingTime} seconds</Typography>
-                <Button variant="contained" color="success" type="submit" size="large" onClick={() => showTimer(false)}>Cancel matching</Button>
+                <Button variant="contained" color="error" type="submit" size="large" onClick={() => cancelMatching()}>Cancel matching</Button>
             </Stack>
         )
     }

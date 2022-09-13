@@ -1,5 +1,4 @@
-const { createMatch, findMatch, deleteMatch } = require('./match-repository.js');
-const { setTimeout } = require('timers/promises');
+const { findMatch, deleteMatch } = require('./match-repository.js');
 
 async function ormFindMatch(data) {
     try {
@@ -22,17 +21,6 @@ async function ormFindMatch(data) {
     }
 }
 
-async function ormCreateMatch(data) {
-    try {
-        // Create a room when listening
-        const newMatch = await createMatch(data);
-        return newMatch;
-    } catch (err) {
-        console.log('ERROR: Could not create a match.');
-        return { err };
-    }
-}
-
 async function ormDeleteMatch(socketId) {
     try {
         await deleteMatch(socketId);
@@ -42,4 +30,4 @@ async function ormDeleteMatch(socketId) {
     }
 }
 
-module.exports = { ormCreateMatch, ormFindMatch, ormDeleteMatch };
+module.exports = { ormFindMatch, ormDeleteMatch };

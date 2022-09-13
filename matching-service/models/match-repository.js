@@ -6,7 +6,6 @@ const MatchModel = require("./match-model.js")
 const sequelize = new Sequelize({
     dialect: config.dialect,
     storage: config.storage,
-    logging: console.log
 });
 
 const Match = MatchModel(sequelize);
@@ -23,13 +22,6 @@ async () => {
 sequelize.sync({ force: true })
   .then(() => {
     console.log(`Database & tables created!`);
-    // Match.create(
-    //   { socketId: '900WQ_X25tzSl9LjAAAD', otherSocketId: null, difficulty: 'expert' },
-    // ).then(function() {
-    //   return Match.findAll();
-    // }).then(function(matches) {
-    //   console.log(matches);
-    // });
 });
 
 const findMatch = async(socketId, difficulty) => {
@@ -60,11 +52,6 @@ const findMatch = async(socketId, difficulty) => {
     return match;
 }
 
-const createMatch = async(match) => {
-    return Match.create(match);
-}
-
-
 const deleteMatch = async(socketId) => { 
     await Match.destroy({
         where: {
@@ -75,4 +62,4 @@ const deleteMatch = async(socketId) => {
     });
 }
 
-module.exports = { sequelize, createMatch, findMatch, deleteMatch }
+module.exports = { sequelize, findMatch, deleteMatch }

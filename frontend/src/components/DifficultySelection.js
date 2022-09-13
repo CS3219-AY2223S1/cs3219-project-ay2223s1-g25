@@ -10,7 +10,6 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import JoinRightIcon from '@mui/icons-material/JoinRight';
-import socket from '../socket.js';
 import CountdownTimer from "./CountdownTimer.js";
 import { capitalizeFirst, startMatching } from "../utils/matching-helper.js"
 
