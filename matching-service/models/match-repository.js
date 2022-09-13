@@ -33,13 +33,15 @@ sequelize.sync({ force: true })
 });
 
 const findMatch = async(socketId, difficulty) => {
+    console.log(socketId);
+
     const [match, created] = await Match.findOrCreate({
         where: { 
             otherSocketId: {
                 [Op.is]: null 
             },
             socketId: {
-                [Sequelize.Op.ne]: socketId,
+                [Op.ne]: socketId,
             },
             difficulty: difficulty
         },
@@ -48,7 +50,14 @@ const findMatch = async(socketId, difficulty) => {
             otherSocketId: null
         },
     });
-    return [match, created];
+
+    if (!created) {
+        console.log(match.otherSocketId);
+        match.otherSocketId = socketId;
+        await match.save();
+    }
+
+    return match;
 }
 
 const createMatch = async(match) => {
@@ -56,8 +65,14 @@ const createMatch = async(match) => {
 }
 
 
-const deleteMatch = async(match) => { 
-    await match.delete();
+const deleteMatch = async(socketId) => { 
+    await Match.destroy({
+        where: {
+            socketId: {
+                [Op.eq]: socketId,
+            }
+        }
+    });
 }
 
 module.exports = { sequelize, createMatch, findMatch, deleteMatch }

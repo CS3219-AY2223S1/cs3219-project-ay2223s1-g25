@@ -11,17 +11,6 @@ const startSocket = (httpServer) => {
     
     io.on('connection', (socket) => {
         console.log(`User connected: ${socket.id}`);
-    
-        // socket.on("join_room", (room) => {
-        //     // Room not made yet
-        //     if (room == undefined) {
-        //         room = socket.id
-        //     }
-        //     socket.join(room);
-        //     console.log(socket)
-    
-        //     socket.to(room).emit("notification", room);
-        // });
 
         socket.on("match", async (args) => {
             // Find a free room in the database
@@ -30,11 +19,32 @@ const startSocket = (httpServer) => {
                 difficulty: args.difficulty
             };
             console.log("Finding a match...");
-            const otherSocketId = await MatchOrm.ormFindMatch(req);
 
+            const match = await MatchOrm.ormFindMatch(req);
 
-            socket.join(otherSocketId);
-            socket.to(args.socketId).emit("notification", "Match found!");
+            if (match) {
+                // A match is found! This socket joins the room of the first socketId
+                const roomId = `room_${match.socketId}`;
+                console.log("match found, redirecting... " + roomId)
+                socket.join(roomId);
+                socket.to(roomId).emit("matchSuccess", "Match found!");
+            } else {
+                // No match found, socket joins its own room
+                const roomId = `room_${socket.id}`;
+                console.log("no match found, waiting for rm " + roomId);
+                socket.join(roomId);
+                socket.emit("matchPending", "Waiting for match...");
+            }
+        })
+
+        socket.once("timeout", async () => {
+            console.log("TIMEOUTTT");
+            
+            const roomId = `room_${socket.id}`;
+            // No match found, delete pending match from DB
+            await MatchOrm.ormDeleteMatch(socket.id);
+            socket.emit("matchFail", "Match not found!");
+            socket.leave(roomId);
         })
     
         socket.on('disconnect', () => {

@@ -12,26 +12,11 @@ import { useState } from "react";
 import JoinRightIcon from '@mui/icons-material/JoinRight';
 import socket from '../socket.js';
 import CountdownTimer from "./CountdownTimer.js";
+import { capitalizeFirst, startMatching } from "../utils/matching-helper.js"
 
 function DifficultySelection() {
     const [difficulty, setDifficulty] = useState("");
-    // const [room, setRoom] = useState("");
     const [isShown, setIsShown] = useState(false)
-    
-    const capitalizeFirst = str => {
-        return str.charAt(0).toUpperCase() + str.slice(1);
-    };
-
-    const startMatching = () => {
-        // Toggle views & countdown
-        setIsShown(current => !current);
-
-        if (difficulty !== "") {
-            socket.emit("match", {
-                "difficulty": difficulty
-            });
-        }
-    }
 
     return (
         <Box display={"flex"} flexDirection={"column"} alignItems="center" maxHeight={"80vh"}>
@@ -48,7 +33,7 @@ function DifficultySelection() {
                         <FormControlLabel value="medium" control={<Radio />} label="Medium" onChange={() => setDifficulty("medium")}/>
                         <FormControlLabel value="hard" control={<Radio />} label="Hard" onChange={() => setDifficulty("hard")}/>
                     </RadioGroup>
-                    <Button variant="contained" color="success" type="submit" size="large" onClick={() => startMatching()} endIcon={<JoinRightIcon />}>Find a match</Button>
+                    <Button variant="contained" color="success" type="submit" size="large" onClick={() => startMatching(difficulty, setIsShown)} endIcon={<JoinRightIcon />}>Find a match</Button>
                 </Stack>
             </FormControl> )}
 

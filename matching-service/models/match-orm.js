@@ -4,8 +4,18 @@ const { setTimeout } = require('timers/promises');
 async function ormFindMatch(data) {
     try {
         // Find a match based on the description
-        const [match, created] = await findMatch(data.socketId, data.difficulty);
-        return match;
+        const match = await findMatch(data.socketId, data.difficulty);
+
+        if (match.otherSocketId !== null) {
+            const prettyMatch = {
+                socketId: match.socketId,
+                otherSocketId: match.otherSocketId,
+                difficulty: match.difficulty,
+            };
+            return prettyMatch;
+        }
+
+        return false;
     } catch (err) {
         console.log('ERROR: Could not find a match.', err);
         return { err };
@@ -23,10 +33,9 @@ async function ormCreateMatch(data) {
     }
 }
 
-async function ormDeleteMatch(match) {
+async function ormDeleteMatch(socketId) {
     try {
-        const res = await deleteMatch(match);
-        return res;
+        await deleteMatch(socketId);
     } catch (err) {
         console.log('ERROR: Could not delete a match.');
         return { err };
