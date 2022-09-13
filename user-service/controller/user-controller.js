@@ -7,12 +7,13 @@ export async function createUser(req, res) {
         if (username && password) {
             const resp = await _createUser(username, password);
             console.log(resp);
-            if (resp.err) {
-                return res.status(400).json({message: 'Could not create a new user!'});
-            } else if (resp.status == STATUS_CODE_CONFLICT) {
+            if (resp.status == STATUS_CODE_CONFLICT) {
                 return res.status(STATUS_CODE_CONFLICT).json({message: 'User already exist!'});
-            }else {
+            } else if (resp.err) {
+                return res.status(400).json({message: 'Could not create a new user!'});
+            }  else {
                 console.log(`Created new user ${username} successfully!`)
+                //create jwt token here
                 return res.status(STATUS_CODE_CREATED).json({message: `Created new user ${username} successfully!`});
             }
         } else {

@@ -17,6 +17,6 @@ export async function createUser(params) {
 
 export async function isUser(params) { 
   let collection = db.collection('usermodels');
-  let object = collection.findOne(params);
+  let object = await collection.findOne(params);
   return !!(object);
 }
