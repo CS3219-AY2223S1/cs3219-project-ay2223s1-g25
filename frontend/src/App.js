@@ -1,4 +1,4 @@
-import {BrowserRouter as Router, Routes, Route, Navigate, BrowserRouter} from "react-router-dom";
+import {BrowserRouter as Router, Routes, Route, Navigate} from "react-router-dom";
 import DifficultySelection from './components/DifficultySelection';
 import SignupPage from './components/SignupPage';
 import {Box} from "@mui/material";
