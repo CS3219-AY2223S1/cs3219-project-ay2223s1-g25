@@ -12,6 +12,11 @@ let db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 export async function createUser(params) { 
-  return new UserModel(params)
+  return new UserModel(params);
 }
 
+export async function isUser(params) { 
+  let collection = db.collection('usermodels');
+  let object = collection.findOne(params);
+  return !!(object);
+}
