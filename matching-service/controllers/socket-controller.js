@@ -19,36 +19,42 @@ const startSocket = (httpServer) => {
                 difficulty: args.difficulty
             };
             console.log("Finding a match...");
-
             const match = await MatchOrm.ormFindMatch(req);
 
             if (match) {
                 // A match is found! This socket joins the room of the first socketId
                 const roomId = `room_${match.socketId}`;
                 console.log("match found, redirecting... " + roomId)
-                socket.join(roomId);
-                socket.to(roomId).emit("matchSuccess", "Match found!");
+                await socket.join(roomId);
+                io.to(roomId).emit("matchSuccess", "Match found!");
             } else {
                 // No match found, socket joins its own room
                 const roomId = `room_${socket.id}`;
                 console.log("no match found, waiting for rm " + roomId);
-                socket.join(roomId);
+                await socket.join(roomId);
                 socket.emit("matchPending", "Waiting for match...");
             }
         })
 
         socket.once("timeout", async () => {
-            console.log("TIMEOUTTT");
-            
-            const roomId = `room_${socket.id}`;
+            console.log("TIMEOUT");
             // No match found, delete pending match from DB
+            const roomId = `room_${socket.id}`;
             await MatchOrm.ormDeleteMatch(socket.id);
             socket.emit("matchFail", "Match not found!");
-            socket.leave(roomId);
+            await socket.leave(roomId);
+        })
+
+        socket.on("leave-room", async () => {
+            console.log("LEAVE ROOM");
+            // delete match only if both players leave the room, otherwise remain the same
+            const [socketId, roomId] = socket.rooms;
+            socket.emit("matchExited");
+            await socket.leave(roomId);
         })
     
         socket.on('disconnect', () => {
-            console.log(`User connected: ${socket.id}`);
+            console.log(`User disconnected: ${socket.id}`);
         });
     });
 }

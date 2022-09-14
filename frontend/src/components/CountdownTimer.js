@@ -2,10 +2,12 @@ import {
     Stack, Button, Typography
 } from "@mui/material";
 import { useState, useEffect } from "react";
-import socket from '../socket.js';
+import socket from '../socket';
 import ArrowBack from '@mui/icons-material/ArrowBack';
+import { useNavigate } from "react-router-dom";
 
 function CountdownTimer({ targetTime, showTimer }) {
+    const navigate = useNavigate();
     const [remainingTime, setRemainingTime] = useState(targetTime)
 
     useEffect(() => {
@@ -25,10 +27,8 @@ function CountdownTimer({ targetTime, showTimer }) {
             // on matchSuccess: redirect both users to their room
             // display match success notification
             else if (eventName === "matchSuccess") {
+                navigate('/room');
             } 
-
-            else if (eventName === "matchPending") {
-            }
         }, [])
     });
 

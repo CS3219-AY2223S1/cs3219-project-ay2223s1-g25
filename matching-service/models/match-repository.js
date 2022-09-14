@@ -25,8 +25,6 @@ sequelize.sync({ force: true })
 });
 
 const findMatch = async(socketId, difficulty) => {
-    console.log(socketId);
-
     const [match, created] = await Match.findOrCreate({
         where: { 
             otherSocketId: {
@@ -44,7 +42,6 @@ const findMatch = async(socketId, difficulty) => {
     });
 
     if (!created) {
-        console.log(match.otherSocketId);
         match.otherSocketId = socketId;
         await match.save();
     }

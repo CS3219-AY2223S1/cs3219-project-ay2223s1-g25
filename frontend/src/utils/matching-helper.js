@@ -1,4 +1,4 @@
-import socket from '../socket.js';
+import socket from '../socket';
 
 const capitalizeFirst = str => {
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -17,4 +17,9 @@ const startMatching = (difficulty, setIsShown) => {
     }
 }
 
-export {capitalizeFirst, startMatching};
+const leaveRoom = () => {
+    socket.emit("leave-room");
+    console.log("leaving room")
+}
+
+export {capitalizeFirst, startMatching, leaveRoom};

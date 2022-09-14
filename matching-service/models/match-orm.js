@@ -13,7 +13,6 @@ async function ormFindMatch(data) {
             };
             return prettyMatch;
         }
-
         return false;
     } catch (err) {
         console.log('ERROR: Could not find a match.', err);
