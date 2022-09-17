@@ -1,0 +1,10 @@
+{
+    "dev": {
+        "app_function": "app.app",
+        "aws_region": "ap-southeast-1",
+        "profile_name": "default",
+        "project_name": "user-service",
+        "runtime": "python3.9",
+        "s3_bucket": "cs3219-project"
+    }
+}

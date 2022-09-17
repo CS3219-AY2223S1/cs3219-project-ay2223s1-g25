@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>PeerPrep | Log in</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='plugins/fontawesome-free/css/all.min.css') }}">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.0.5/css/adminlte.min.css" integrity="sha384-K3U6uOl+lsXDvtMNwMbdrPpzTOxVbGec55DVgWN4uDZ86YxMRIujVXrff1LOLjVk" crossorigin="anonymous">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+  {% block styles %}
+  {% endblock %}
+</head>
+<body class="hold-transition login-page">
+<div class="login-box">
+  <div class="login-logo">
+    <b>PeerPrep</b>
+  </div>
+  <!-- /.login-logo -->
+  <div class="card">
+    <div class="card-body login-card-body">
+        {% block loginContent %}
+        {% endblock %}
+    </div>
+    
+    {% with msgs = get_flashed_messages(with_categories=true) %}
+            {% if msgs %}
+            <div class="card-footer">
+              {% for cat,msg in msgs %}
+                <div class="alert alert-{{cat}} alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                  {{msg}}
+                </div>
+              {% endfor %}
+              </div>
+            {% endif %}
+          {% endwith %}
+    
+    <!-- /.login-card-body -->
+  </div>
+</div>
+<!-- /.login-box -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js" integrity="sha384-1CmrxMRARb6aLqgBO7yyAxTOQE2AKb9GfXnEo760AUcUmFx3ibVJJAzGytlQcNXd" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.0.5/js/adminlte.min.js" integrity="sha384-MPMu19FXmzMGaq5CEQairu/lARKuHUSg3jc90NMdmNYuCT4tyaf5xadNHJKqhs1k" crossorigin="anonymous"></script>
+ 
+<!--
+<script src="{{ url_for('static', filename='plugins/jquery/jquery.min.js') }}"></script>
+<script src="{{ url_for('static', filename='plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/adminlte.min.js') }}"></script> -->
+{% block scripts %}
+{% endblock %}
+</body>
+</html>
