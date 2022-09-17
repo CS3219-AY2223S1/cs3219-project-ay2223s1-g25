@@ -7,4 +7,4 @@ The user service is built using python Flask and AWS Cognito. It communicates wi
 - AWS Cognito
 - Python
 - Flask
-
+- Zappa
