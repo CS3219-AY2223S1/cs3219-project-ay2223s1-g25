@@ -31,7 +31,7 @@ function Chat({ socket, room }) {
       </div>
       <div className="messagebox">
         <input
-          onChange={(event) => {
+          onInput={(event) => {
             setMessage(event.target.value);
           }}
           type="text"
