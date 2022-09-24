@@ -22,10 +22,12 @@ const io = new Server(httpServer, {
   });
 
 io.on('connection', (socket) => {
+    socket.join("room");
     console.log('User connected!', socket.id);
 
-    socket.on("message", (data) => {
+    socket.on("send", (data) => {
         console.log(data);
+        socket.to("room").emit('get', data);
     })
 
     socket.on('disconnect', () => {
