@@ -18,6 +18,10 @@ const io = new Server(httpServer);
 
 io.on('connection', (socket) => {
     console.log('User connected!', socket.id);
+
+    socket.on('disconnect', () => {
+        console.log('User disconnected!', socket.id);
+    })
 });
 
 httpServer.listen(8001, () => {
