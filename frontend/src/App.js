@@ -1,5 +1,6 @@
 import {BrowserRouter as Router, Routes, Route, Navigate} from "react-router-dom";
 import SignupPage from './components/SignupPage';
+import Chat from './components/Chat';
 import {Box} from "@mui/material";
 
 import io from 'socket.io-client';
@@ -14,6 +15,7 @@ function App() {
                     <Routes>
                         <Route exact path="/" element={<Navigate replace to="/signup" />}></Route>
                         <Route path="/signup" element={<SignupPage/>}/>
+                        <Route path="/chat" element={<Chat socket={socket}/>}/>
                     </Routes>
                 </Router>
             </Box>
