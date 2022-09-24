@@ -6,6 +6,7 @@ import {Box} from "@mui/material";
 import io from 'socket.io-client';
 
 const socket = io.connect('http://localhost:8001');
+const room = "room";
 
 function App() {
     return (
@@ -15,7 +16,7 @@ function App() {
                     <Routes>
                         <Route exact path="/" element={<Navigate replace to="/signup" />}></Route>
                         <Route path="/signup" element={<SignupPage/>}/>
-                        <Route path="/chat" element={<Chat socket={socket}/>}/>
+                        <Route path="/chat" element={<Chat socket={socket} room={room} />}/>
                     </Routes>
                 </Router>
             </Box>
