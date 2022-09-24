@@ -1,14 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
-function Chat({ socket, room }) {
+function Chat({ socket }) {
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([]);
-
-  useEffect(() => {
-    socket.on("get", (data) => {
-      setMessages(arr => [...arr, data]);
-    });
-  }, [socket]);
 
   const sendMessage = async () => {
     if (message) {
@@ -16,19 +9,14 @@ function Chat({ socket, room }) {
         sentBy: socket.id,
         message: message,
       };
-      await socket.emit("send", data);
-      setMessages(arr => [...arr, data]);
+      await socket.emit("message", data);
       setMessage("");
     }
   };
 
   return (
     <div>
-      <div className="chatbox">
-        {messages.map((message) => {
-          return (<h3>{message.message}</h3>);
-        })}
-      </div>
+      <div className="chatbox"></div>
       <div className="messagebox">
         <input
           onChange={(event) => {
@@ -43,4 +31,4 @@ function Chat({ socket, room }) {
   );
 }
 
-export default Chat;
+export default Chat
