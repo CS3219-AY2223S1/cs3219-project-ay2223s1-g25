@@ -10,4 +10,9 @@ io.on("connection", socket => {
     socket.on("send-changes", delta => {
         socket.broadcast.emit("receive-changes", delta)
     })  
+
+    socket.on('disconnect', () => {
+        //alert user if other user disconnects
+        console.log('Disconnected');
+    });
 })
