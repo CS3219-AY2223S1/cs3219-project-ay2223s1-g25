@@ -5,6 +5,7 @@ import { leaveRoom } from "../utils/matching-helper"
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import socket from '../socket';
+import TextEditor from './TextEditor'
 
 function Room() {
     const navigate = useNavigate();
@@ -19,7 +20,7 @@ function Room() {
         <Box display={"flex"} flexDirection={"column"} alignItems="center" maxHeight={"80vh"}>
 
             <Typography variant={"h3"} margin={"1rem"}>Room</Typography>
-
+            <TextEditor/>
 
             <Stack direction="column"
             justifyContent="center"
