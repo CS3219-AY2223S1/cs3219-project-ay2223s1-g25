@@ -1,6 +1,7 @@
-import express from 'express';
-import cors from 'cors';
-import { createServer } from 'http';
+const express = require('express');
+const cors = require('cors');
+const { createServer } = require('http');
+const startSocket = require("./controllers/socket-controller.js");
 
 const app = express();
 app.use(express.urlencoded({ extended: true }))
@@ -13,5 +14,6 @@ app.get('/', (req, res) => {
 });
 
 const httpServer = createServer(app)
+startSocket(httpServer);
 
 httpServer.listen(8001);
