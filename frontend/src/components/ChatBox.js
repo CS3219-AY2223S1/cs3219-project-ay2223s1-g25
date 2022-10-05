@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
-import "./chat.css";
 import moment from "moment";
 import { saveAs } from "file-saver";
 
