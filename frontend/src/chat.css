@@ -5,6 +5,8 @@ body {
 
 .chat-window {
   border: 1px solid;
+  width: 90vh;
+  margin-bottom: 20px;
   border-radius: 8px;
 }
 
