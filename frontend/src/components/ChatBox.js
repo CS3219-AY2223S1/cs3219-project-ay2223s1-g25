@@ -1,14 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import { io } from "socket.io-client";
 import moment from "moment";
 import { saveAs } from "file-saver";
-
-const socket = io("http://localhost:3001");
+import socket from '../socket';
 
 function ChatBox() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const [sid, setSid] = useState("");
+  // const [sid, setSid] = useState(socket.id);
   const [val, setVal] = useState("");
 
   const scrollRef = useRef(null);
@@ -40,7 +38,7 @@ function ChatBox() {
     if (message.length > 0) {
       const dt = moment();
       const msg = {
-        sentBy: sid,
+        sentBy: socket.id,
         content: message,
         date: dt.format("l"),
         timestamp: dt.format("LT"),
@@ -56,17 +54,17 @@ function ChatBox() {
     if (event.key === "Enter") {
       sendMessage();
     }
-  }
+  };
 
-  useEffect(() => {
-    socket.on("sid", (id) => {
-      setSid(id);
-    });
+  // useEffect(() => {
+  //   socket.on("sid", (id) => {
+  //     setSid(id);
+  //   });
 
-    return () => {
-      socket.off("sid");
-    };
-  }, []);
+  //   return () => {
+  //     socket.off("sid");
+  //   };
+  // }, []);
 
   return (
     <div className="chat-window">
@@ -78,7 +76,7 @@ function ChatBox() {
       </div>
       <div className="chat-body">
         {messages.map((msg) => {
-          if (msg.sentBy === sid) {
+          if (msg.sentBy === socket.id) {
             return (
               <div className="chat-right">
                 {msg.content}
@@ -115,4 +113,3 @@ function ChatBox() {
 }
 
 export default ChatBox;
-
