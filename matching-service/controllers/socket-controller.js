@@ -45,6 +45,11 @@ const startSocket = (httpServer) => {
             await socket.leave(roomId);
         })
 
+        socket.on("send-changes", (delta) => {
+            const [socketId, roomId] = socket.rooms;
+            socket.to(roomId).emit("receive-changes", delta);
+          });
+
         socket.on("leave-room", async () => {
             console.log("LEAVE ROOM");
             // delete match only if both players leave the room, otherwise remain the same

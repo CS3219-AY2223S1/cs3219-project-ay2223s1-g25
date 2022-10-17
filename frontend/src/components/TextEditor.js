@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react'
 import Quill from "quill"
 import "quill/dist/quill.snow.css"
-import {io} from 'socket.io-client'
+import socket from '../socket';
 
 const TOOLBAR_OPTIONS = [
     [{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -16,17 +16,7 @@ const TOOLBAR_OPTIONS = [
 ] 
 
 function TextEditor() {
-    const [socket, setSocket] = useState()
     const [quill, setQuill] = useState()
-
-    useEffect(() => {
-        const s = io('http://localhost:3001')
-        setSocket(s)
-
-        return () => {
-            s.disconnect()
-        }
-    }, [])
 
     useEffect(() => {
         if(socket == null || quill == null) return
