@@ -12,9 +12,15 @@ const app = express();
 const port = process.env.API_PORT || 3001;
 const appPort = process.env.SERVER_PORT || 3000;
 const appOrigin = config.appOrigin || `http://localhost:${appPort}`;
+const collabService = config.collabService || `http://localhost:4001`;
+const chatService = config.chatService || `http://localhost:5001`;
+const questionService = config.questionService || `http://localhost:6001`;
 const matchingService = config.matchingService || `http://localhost:8001`;
-const matchingServiceProxy = createProxyMiddleware({ target: matchingService, ws: true,
-pathRewrite: {'^/api/matching' : ''} });
+
+const collabServiceProxy = createProxyMiddleware({ target: collabService, ws: true, pathRewrite: {'^/api/collab' : ''} });
+const chatServiceProxy = createProxyMiddleware({ target: chatService, ws: true, pathRewrite: {'^/api/chat' : ''} });
+const questionServiceProxy = createProxyMiddleware({ target: questionService, ws: true, pathRewrite: {'^/api/question' : ''} });
+const matchingServiceProxy = createProxyMiddleware({ target: matchingService, ws: true, pathRewrite: {'^/api/matching' : ''} });
 
 if (
   !config.domain ||
@@ -44,6 +50,9 @@ const checkJwt = jwt({
   algorithms: ["RS256"],
 });
 
+app.use("/api/collab", checkJwt, collabServiceProxy);
+app.use("/api/chat", checkJwt, chatServiceProxy);
+app.use("/api/question", checkJwt, questionServiceProxy);
 app.use("/api/matching", checkJwt, matchingServiceProxy);
 
 app.get("/", (req, res) => {
