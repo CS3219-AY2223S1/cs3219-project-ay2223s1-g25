@@ -4,13 +4,14 @@ const capitalizeFirst = str => {
     return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
-const startMatching = (difficulty, setIsShown) => {
+const startMatching = (userId, difficulty, setIsShown) => {
     // Toggle views & countdown
     setIsShown(current => !current);
 
     if (difficulty !== "") {
         getSocket().emit("match", {
-            "difficulty": difficulty
+            "difficulty": difficulty,
+            "userId": userId
         });
     } else {
         console.log("no difficulty...")

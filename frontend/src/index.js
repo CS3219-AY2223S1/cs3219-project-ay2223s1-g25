@@ -19,6 +19,7 @@ const providerConfig = {
   scope: config.scope,
   redirectUri: window.location.origin,
   useRefreshTokens: true,
+  // screen_hint: "signup"
 };
 
 root.render(

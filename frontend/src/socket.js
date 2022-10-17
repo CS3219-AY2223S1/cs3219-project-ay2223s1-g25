@@ -9,11 +9,13 @@ const getSocket = () => {
 }
 
 const createSocket = (accessToken) => {
-    socket = io.connect(URL, {path: MATCHING_SERVICE + "/socket.io",
-    extraHeaders: {
-        Authorization: "Bearer " + accessToken
-      }
-    });
+    if (!socket) {
+        socket = io.connect(URL, {path: MATCHING_SERVICE + "/socket.io",
+        extraHeaders: {
+            Authorization: "Bearer " + accessToken
+        }
+        });
+    }
 };
 
 export {getSocket, createSocket};

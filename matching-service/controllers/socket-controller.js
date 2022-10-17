@@ -1,6 +1,20 @@
 const { Server } = require('socket.io')
 const MatchOrm = require("../models/match-orm.js")
 
+var userRoomDict = {};
+
+const getRoomId = (req, res) => {
+    if (req.auth.sub in userRoomDict) {
+        res.send({
+            roomId: userRoomDict[req.auth.sub]
+        });
+    } else {
+        res.send({
+            error: "No room id found."
+        });
+    }
+}
+
 const startSocket = (httpServer) => {
     const io = new Server(httpServer, {
         cors: {
@@ -24,13 +38,15 @@ const startSocket = (httpServer) => {
             if (match) {
                 // A match is found! This socket joins the room of the first socketId
                 const roomId = `room_${match.socketId}`;
-                console.log("match found, redirecting... " + roomId)
+                console.log("match found, redirecting... " + roomId);
+                userRoomDict[args.userId] = roomId;
                 await socket.join(roomId);
                 io.to(roomId).emit("matchSuccess", "Match found!");
             } else {
                 // No match found, socket joins its own room
                 const roomId = `room_${socket.id}`;
                 console.log("no match found, waiting for rm " + roomId);
+                userRoomDict[args.userId] = roomId;
                 await socket.join(roomId);
                 socket.emit("matchPending", "Waiting for match...");
             }
@@ -41,6 +57,7 @@ const startSocket = (httpServer) => {
             // No match found, delete pending match from DB
             const roomId = `room_${socket.id}`;
             await MatchOrm.ormDeleteMatch(socket.id);
+            delete userRoomDict[args.userId];
             socket.emit("matchFail", "Match not found!");
             await socket.leave(roomId);
         })
@@ -64,4 +81,4 @@ const startSocket = (httpServer) => {
     });
 }
 
-module.exports = startSocket;
+module.exports = {startSocket, getRoomId};
