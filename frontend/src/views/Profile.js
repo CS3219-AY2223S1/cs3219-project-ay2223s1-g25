@@ -4,6 +4,7 @@ import { Box, Grid, Avatar } from "@mui/material";
 import Highlight from "../components/Highlight";
 import Loading from "../components/Loading";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
+import { getConfig } from "../configs";
 
 export const ProfileComponent = () => {
   const { user, getAccessTokenSilently  } = useAuth0();
@@ -11,7 +12,7 @@ export const ProfileComponent = () => {
 
   useEffect(() => {
     const getUserMetadata = async () => {
-      const domain = "dev-m5g-sp6d.us.auth0.com";
+      const domain = getConfig().domain;
   
       try {
         const accessToken = await getAccessTokenSilently({
@@ -26,7 +27,7 @@ export const ProfileComponent = () => {
             Authorization: `Bearer ${accessToken}`,
           },
         });
-  
+        
         const { user_metadata } = await metadataResponse.json();
   
         setUserMetadata(user_metadata);
