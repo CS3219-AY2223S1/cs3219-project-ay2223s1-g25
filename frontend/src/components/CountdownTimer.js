@@ -2,7 +2,7 @@ import {
     Stack, Button, Typography
 } from "@mui/material";
 import { useState, useEffect } from "react";
-import socket from '../socket';
+import { getSocket } from '../socket';
 import ArrowBack from '@mui/icons-material/ArrowBack';
 import { useNavigate } from "react-router-dom";
 
@@ -18,7 +18,7 @@ function CountdownTimer({ targetTime, showTimer }) {
     }, []);
 
     useEffect(() => {
-        socket.onAny((eventName, ...args) => {
+        getSocket().onAny((eventName, ...args) => {
             // on matchFail: restart matching process
             // display match fail notification
             if (eventName === "matchFail") {
@@ -33,12 +33,12 @@ function CountdownTimer({ targetTime, showTimer }) {
     });
 
     const cancelMatching = () => {
-        socket.emit("timeout");
+        getSocket().emit("timeout");
         showTimer(false)
     }
 
     if (remainingTime <= 0) {
-        socket.emit("timeout");
+        getSocket().emit("timeout");
         return (
             <Stack direction="column"
             justifyContent="center"

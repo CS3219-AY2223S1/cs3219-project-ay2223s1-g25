@@ -1,5 +1,13 @@
-const URI_USER_SVC = process.env.URI_USER_SVC || 'http://localhost:8000'
+import configJson from "./auth_config.json";
 
-const PREFIX_USER_SVC = '/api/user'
+export const API_SERVER = "http://localhost:3001";
+export const MATCHING_SERVICE = "/api/matching";
 
-export const URL_USER_SVC = URI_USER_SVC + PREFIX_USER_SVC
+export function getConfig() {
+  return {
+    domain: configJson.domain,
+    clientId: configJson.clientId,
+    audience: configJson.audience,
+    scope: configJson.scope,
+  };
+}
