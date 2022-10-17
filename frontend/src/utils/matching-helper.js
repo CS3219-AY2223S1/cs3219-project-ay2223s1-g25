@@ -1,4 +1,4 @@
-import { getSocket } from '../socket';
+import { getMatchingSocket } from '../socket';
 
 const capitalizeFirst = str => {
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -9,7 +9,7 @@ const startMatching = (userId, difficulty, setIsShown) => {
     setIsShown(current => !current);
 
     if (difficulty !== "") {
-        getSocket().emit("match", {
+        getMatchingSocket().emit("match", {
             "difficulty": difficulty,
             "userId": userId
         });
@@ -19,7 +19,7 @@ const startMatching = (userId, difficulty, setIsShown) => {
 }
 
 const leaveRoom = () => {
-    getSocket().emit("leave-room");
+    getMatchingSocket().emit("leave-room");
     console.log("leaving room")
 }
 
