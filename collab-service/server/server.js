@@ -1,17 +1,21 @@
-const io = require('socket.io')(3001, {
+const io = require('socket.io')(4001, {
     cors: {
-        origin: 'http://localhost:3000',
+        origin: '*',
         methods: ['GET', 'POST'],
     },
 })
 
-io.on("connection", socket => {
+    io.on("connection", socket => {
     console.log('connected', socket.id);
-    io.to(socket.id).emit("sid", socket.id);
-
-    socket.on("send-changes", delta => {
-        socket.broadcast.emit("receive-changes", delta)
-    })  
+    io.to(socket.id).emit("connected", socket.id);
+    var roomId;
+    socket.on("signin", (data) => {
+        roomId = data;
+        socket.join(roomId);});
+    socket.on("send-changes", (delta) => {
+        console.log(roomId);
+        socket.to(roomId).emit("receive-changes", delta);
+    });
 
     socket.on('disconnect', () => {
         //alert user if other user disconnects
