@@ -4,14 +4,14 @@ import {
 import { leaveRoom } from "../utils/matching-helper"
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import socket from '../socket';
+import { getSocket } from '../socket';
 import TextEditor from './TextEditor'
 
 function Room() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        socket.on("matchExited", () => {
+        getSocket().on("matchExited", () => {
             navigate('/difficulty');
         }, [])
     });

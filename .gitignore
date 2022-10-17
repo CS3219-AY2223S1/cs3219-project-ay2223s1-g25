@@ -1,0 +1,5 @@
+node_modules/
+env/
+.env
+awsconfig.py
+__pycache__
