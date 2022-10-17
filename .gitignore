@@ -1,5 +1,5 @@
 node_modules/
 env/
 .env
-awsconfig.py
+config.json
 __pycache__
