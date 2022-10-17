@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react'
 import Quill from "quill"
 import "quill/dist/quill.snow.css"
-import socket from '../socket';
+import { getCollabSocket } from '../socket';
 
 const TOOLBAR_OPTIONS = [
     [{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -15,30 +15,30 @@ const TOOLBAR_OPTIONS = [
     ["clean"],
 ] 
 
-function TextEditor() {
+export default function TextEditor() {
     const [quill, setQuill] = useState()
 
     useEffect(() => {
-        if(socket == null || quill == null) return
+        if(getCollabSocket() == null || quill == null) return
     
         const handler = (delta) => {
             quill.updateContents(delta)
         }
 
-        socket.on('receive-changes', handler)
+        getCollabSocket().on('receive-changes', handler)
 
         return () => {
-            socket.off('receive-changes', handler)
+            getCollabSocket().off('receive-changes', handler)
         }
-    }, [socket, quill])
+    }, [quill])
 
     useEffect(() => {
-        if(socket == null || quill == null) return
+        if(getCollabSocket() == null || quill == null) return
     
         const handler = (delta, oldDelta, source) => {
             if (source !== 'user') return
 
-            socket.emit("send-changes", delta)
+            getCollabSocket().emit("send-changes", delta)
         }
 
         quill.on('text-change', handler)
@@ -46,7 +46,7 @@ function TextEditor() {
         return () => {
             quill.off('text-change', handler)
         }
-    }, [socket, quill])
+    }, [quill])
 
     const wrapperRef = useCallback((wrapper) => {
         if (wrapper == null) {
@@ -61,5 +61,3 @@ function TextEditor() {
     }, [])
   return <div className="text-container" ref={wrapperRef}></div>
 }
-
-export default TextEditor;
