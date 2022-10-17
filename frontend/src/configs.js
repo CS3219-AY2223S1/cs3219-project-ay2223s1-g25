@@ -2,7 +2,7 @@ import configJson from "./auth_config.json";
 
 export const API_SERVER = "http://localhost:3001";
 export const MATCHING_SERVICE = "/api/matching";
-
+export const COLLAB_SERVICE = "/api/collab";
 export function getConfig() {
   return {
     domain: configJson.domain,
