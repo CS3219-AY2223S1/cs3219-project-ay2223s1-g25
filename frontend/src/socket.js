@@ -1,10 +1,19 @@
 import { io } from "socket.io-client";
+import { API_SERVER, MATCHING_SERVICE } from "./configs";
 
-const URL = "http://localhost:8001";
-const socket = io.connect(URL);
+const URL = API_SERVER;
+var socket;
 
-socket.onAny((event, ...args) => {
-    console.log(event, args);
-});  
+const getSocket = () => {
+    return socket;
+}
 
-export default socket;
+const createSocket = (accessToken) => {
+    socket = io.connect(URL, {path: MATCHING_SERVICE + "/socket.io",
+    extraHeaders: {
+        Authorization: "Bearer " + accessToken
+      }
+    });
+};
+
+export {getSocket, createSocket};
