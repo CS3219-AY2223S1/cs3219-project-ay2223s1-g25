@@ -6,7 +6,7 @@ import {
 import { useAuth0 } from "@auth0/auth0-react";
 import DifficultySelection from '../components/DifficultySelection';
 import { useEffect } from "react";
-import { createSocket } from '../socket';
+import { createMatchingSocket } from '../socket';
 import { getConfig } from "../configs";
 
 function Dashboard() {
@@ -19,7 +19,7 @@ function Dashboard() {
                 audience: `https://${domain}/api/v2/`,
                 scope: "read:current_user",
               });
-            createSocket(accessToken);
+            createMatchingSocket(accessToken);
         }
     }
     authSocket();
