@@ -35,7 +35,7 @@ const createCollabSocket = (accessToken) => {
             let config = { headers: {
                 Authorization: "Bearer " + accessToken
             }};
-            axios.get(URL + MATCHING_SERVICE + "/roomId", config).then(res => {
+            axios.get(URL + MATCHING_SERVICE + "/room", config).then(res => {
                 const roomId = res.data.roomId;
                 console.log(roomId);
                 collabSocket.emit('signin', roomId);

@@ -9,9 +9,11 @@ app.use(cors()) // config cors so that front-end can use
 app.options('*', cors())
 
 app.get('/', (_, res) => res.send('Hello World from question-service'))
-app.get('/getQuestionByDiff', getQuestionByDiff);
-app.get('/getQuestionByTopic', getQuestionByTopic);
-app.post('/createQuestion', createQuestion);
+// app.use('/api/question', apiRoutes);
+
+app.get('/api/question/getQuestionByDiff', getQuestionByDiff);
+app.get('/api/question/getQuestionByTopic', getQuestionByTopic);
+app.post('/api/question/createQuestion', createQuestion);
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -21,4 +23,4 @@ app.use(function(req, res, next) {
     next();
 });
 
-app.listen(8002, () => console.log('Question-service listening on port 8002'));
+app.listen(6001, () => console.log('Question-service listening on port 6001'));
