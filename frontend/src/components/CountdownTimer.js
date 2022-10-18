@@ -36,6 +36,7 @@ function CountdownTimer({ targetTime, showTimer }) {
                     scope: "read:current_user",
                   });
                 createCollabSocket(accessToken);
+                createChatSocket(accessToken);
                 navigate('/room');
             } 
         }, [])
