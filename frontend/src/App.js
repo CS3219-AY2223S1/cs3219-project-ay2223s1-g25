@@ -1,25 +1,37 @@
-import {BrowserRouter as Router, Routes, Route, Navigate} from "react-router-dom";
-import DifficultySelection from './components/DifficultySelection';
-import SignupPage from './components/SignupPage';
-import ChatBox from './components/ChatBox';
+import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
+import ProfileComponent from './views/Profile';
+import { useAuth0 } from "@auth0/auth0-react";
 import Room from './components/Room'
 import {Box} from "@mui/material";
+import ProtectedComponent from './components/ProtectedComponent';
+import Dashboard from "./views/Dashboard";
+import NavBar from "./components/NavBar";
+import Loading from "./components/Loading";
 
 function App() {
+    const { isLoading, error } = useAuth0();
+
+    if (error) {
+      return <div>Oops... {error.message}</div>;
+    }
+  
+    if (isLoading) {
+      return <Loading />;
+    }
+  
     return (
-        <div className="App">
+    <Router>
+        <div id="app" className="d-flex flex-column h-100">
+          <NavBar />
             <Box display={"flex"} flexDirection={"column"} padding={"4rem"}>
-                <Router>
                     <Routes>
-                        <Route exact path="/" element={<Navigate replace to="/signup" />}></Route>
-                        <Route path="/signup" element={<SignupPage/>}/>
-                        <Route path="/chatbox" element={<ChatBox/>}/>
-                        <Route path="/difficulty" element={<DifficultySelection />}/>
-                        <Route path="/room" element={<Room />}/>
+                        <Route exact path="/" element={<Dashboard />} />
+                        <Route path="/profile" element={<ProfileComponent />}/>
+                        <Route path="/room" element={<ProtectedComponent component={Room} />}/>
                     </Routes>
-                </Router>
             </Box>
         </div>
+        </Router>
     );
 }
 
