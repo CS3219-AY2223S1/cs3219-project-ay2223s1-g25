@@ -2,7 +2,7 @@ import {
     Stack, Button, Typography
 } from "@mui/material";
 import { useState, useEffect } from "react";
-import { getMatchingSocket, createCollabSocket } from '../socket';
+import { getMatchingSocket, createCollabSocket, createChatSocket } from '../socket';
 import ArrowBack from '@mui/icons-material/ArrowBack';
 import { useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";

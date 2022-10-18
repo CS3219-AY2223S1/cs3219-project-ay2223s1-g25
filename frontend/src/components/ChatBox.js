@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import moment from "moment";
 import { saveAs } from "file-saver";
-import socket from '../socket';
+import { getChatSocket } from "../socket";
 
 function ChatBox() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  // const [sid, setSid] = useState(socket.id);
+  const [sid, setSid] = useState("");
   const [val, setVal] = useState("");
 
   const scrollRef = useRef(null);
@@ -16,12 +16,26 @@ function ChatBox() {
   }, [messages]);
 
   useEffect(() => {
-    socket.on("gotMsg", (msg) => {
+    if (getChatSocket() == null) return;
+
+    getChatSocket().on("got-msg", (msg) => {
       setMessages((messages) => [...messages, msg]);
     });
 
     return () => {
-      socket.off("gotMsg");
+      getChatSocket().off("got-msg");
+    };
+  }, []);
+
+  useEffect(() => {
+    if (getChatSocket() == null) return;
+
+    getChatSocket().on("connected", (id) => {
+      setSid(id);
+    });
+
+    return () => {
+      getChatSocket().off("connected");
     };
   }, []);
 
@@ -35,16 +49,18 @@ function ChatBox() {
   };
 
   const sendMessage = () => {
+    if (getChatSocket() == null) return;
+
     if (message.length > 0) {
       const dt = moment();
       const msg = {
-        sentBy: socket.id,
+        sentBy: sid,
         content: message,
         date: dt.format("l"),
         timestamp: dt.format("LT"),
       };
 
-      socket.emit("sendMsg", msg);
+      getChatSocket().emit("send-msg", msg);
       setMessages((messages) => [...messages, msg]);
       setVal("");
     }
@@ -56,16 +72,6 @@ function ChatBox() {
     }
   };
 
-  // useEffect(() => {
-  //   socket.on("sid", (id) => {
-  //     setSid(id);
-  //   });
-
-  //   return () => {
-  //     socket.off("sid");
-  //   };
-  // }, []);
-
   return (
     <div className="chat-window">
       <div className="chat-title">
@@ -76,7 +82,7 @@ function ChatBox() {
       </div>
       <div className="chat-body">
         {messages.map((msg) => {
-          if (msg.sentBy === socket.id) {
+          if (msg.sentBy === sid) {
             return (
               <div className="chat-right">
                 {msg.content}
