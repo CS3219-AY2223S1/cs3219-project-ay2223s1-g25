@@ -1,20 +1,4 @@
-import express from "express";
-import cors from "cors";
-import { createServer } from "http";
-import { Server } from "socket.io";
-
-const app = express();
-app.use(express.json());
-app.use(cors());
-app.options("*", cors());
-
-app.get("/", (req, res) => {
-  res.send("Hello World from matching-service");
-});
-
-const httpServer = createServer(app);
-
-const io = new Server(httpServer, {
+const io = require("socket.io")(5001, {
   cors: {
     origin: "*",
     methods: ["GET", "POST"],
@@ -23,17 +7,23 @@ const io = new Server(httpServer, {
 
 io.on("connection", (socket) => {
   console.log("Connection: ", socket.id);
-  io.to(socket.id).emit("sid", socket.id);
 
-  socket.on("sendMsg", (msg) => {
-    socket.broadcast.emit("gotMsg", msg);
+  io.to(socket.id).emit("connected", socket.id);
+
+  var roomId;
+
+  socket.on("signin", (data) => {
+    roomId = data;
+    socket.join(roomId);
+  });
+
+  socket.on("send-msg", (msg) => {
+    console.log(roomId);
+    socket.to(roomId).emit("got-msg", msg);
   });
 
   socket.on("disconnect", () => {
     console.log("Disconnection: ", socket.id);
-  })
+  });
 });
 
-httpServer.listen(3001, () => {
-  console.log("Server running 3001");
-});
