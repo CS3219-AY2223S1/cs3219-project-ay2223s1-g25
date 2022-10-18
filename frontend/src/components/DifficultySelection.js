@@ -12,10 +12,12 @@ import { useState } from "react";
 import JoinRightIcon from '@mui/icons-material/JoinRight';
 import CountdownTimer from "./CountdownTimer.js";
 import { capitalizeFirst, startMatching } from "../utils/matching-helper.js"
+import { useAuth0 } from "@auth0/auth0-react";
 
 function DifficultySelection() {
     const [difficulty, setDifficulty] = useState("");
-    const [isShown, setIsShown] = useState(false)
+    const [isShown, setIsShown] = useState(false);
+    const { user } = useAuth0();
 
     return (
         <Box display={"flex"} flexDirection={"column"} alignItems="center" maxHeight={"80vh"}>
@@ -32,7 +34,7 @@ function DifficultySelection() {
                         <FormControlLabel value="medium" control={<Radio />} label="Medium" onChange={() => setDifficulty("medium")}/>
                         <FormControlLabel value="hard" control={<Radio />} label="Hard" onChange={() => setDifficulty("hard")}/>
                     </RadioGroup>
-                    <Button variant="contained" color="success" type="submit" size="large" onClick={() => startMatching(difficulty, setIsShown)} endIcon={<JoinRightIcon />}>Find a match</Button>
+                    <Button variant="contained" color="success" type="submit" size="large" onClick={() => startMatching(user.sub, difficulty, setIsShown)} endIcon={<JoinRightIcon />}>Find a match</Button>
                 </Stack>
             </FormControl> )}
 

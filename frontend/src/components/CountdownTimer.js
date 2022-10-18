@@ -2,13 +2,16 @@ import {
     Stack, Button, Typography
 } from "@mui/material";
 import { useState, useEffect } from "react";
-import socket from '../socket';
+import { getMatchingSocket, createCollabSocket } from '../socket';
 import ArrowBack from '@mui/icons-material/ArrowBack';
 import { useNavigate } from "react-router-dom";
+import { useAuth0 } from "@auth0/auth0-react";
+import { getConfig } from "../configs";
 
 function CountdownTimer({ targetTime, showTimer }) {
     const navigate = useNavigate();
     const [remainingTime, setRemainingTime] = useState(targetTime)
+    const { getAccessTokenSilently } = useAuth0();
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -18,7 +21,7 @@ function CountdownTimer({ targetTime, showTimer }) {
     }, []);
 
     useEffect(() => {
-        socket.onAny((eventName, ...args) => {
+        getMatchingSocket().onAny(async (eventName, ...args) => {
             // on matchFail: restart matching process
             // display match fail notification
             if (eventName === "matchFail") {
@@ -27,18 +30,24 @@ function CountdownTimer({ targetTime, showTimer }) {
             // on matchSuccess: redirect both users to their room
             // display match success notification
             else if (eventName === "matchSuccess") {
+                const domain = getConfig().domain;
+                const accessToken = await getAccessTokenSilently({
+                    audience: `https://${domain}/api/v2/`,
+                    scope: "read:current_user",
+                  });
+                createCollabSocket(accessToken);
                 navigate('/room');
             } 
         }, [])
     });
 
     const cancelMatching = () => {
-        socket.emit("timeout");
+        getMatchingSocket().emit("timeout");
         showTimer(false)
     }
 
     if (remainingTime <= 0) {
-        socket.emit("timeout");
+        getMatchingSocket().emit("timeout");
         return (
             <Stack direction="column"
             justifyContent="center"
