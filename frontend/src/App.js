@@ -1,7 +1,7 @@
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import ProfileComponent from './views/Profile';
 import { useAuth0 } from "@auth0/auth0-react";
-import Room from './components/Room'
+import Room from './views/Room'
 import {Box} from "@mui/material";
 import ProtectedComponent from './components/ProtectedComponent';
 import Dashboard from "./views/Dashboard";
@@ -18,10 +18,10 @@ function App() {
     if (isLoading) {
       return <Loading />;
     }
-  
+
     return (
     <Router>
-        <div id="app" className="d-flex flex-column h-100">
+        <div id="app" className="d-flex flex-column">
           <NavBar />
             <Box display={"flex"} flexDirection={"column"} padding={"4rem"}>
                     <Routes>
