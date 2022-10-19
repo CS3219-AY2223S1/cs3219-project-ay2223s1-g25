@@ -2,6 +2,10 @@ import { ormCreateQuestion as _createQuestion,
     ormGetQuestionByDiff as _getQuestionByDiff, 
     ormGetQuestionByTopic as _getQuestionByTopic } from '../model/question-orm.js'
 
+import { createClient } from 'redis';
+let redisClient = createClient();
+(async () => { await redisClient.connect(); })();
+
 export async function createQuestion(req, res) {
     try {
         const difficulty = req.body.difficulty;
@@ -28,15 +32,32 @@ export async function createQuestion(req, res) {
     }
 }
 
+function sleep(ms) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+}
 export async function getQuestionByDiff(req, res) {
     try {
-        const difficulty = req.query.difficulty;
-        const resp = await _getQuestionByDiff(difficulty);
-        
-        if (resp.err) {
-            return res.status(400).json({message: 'Could not find a question by difficulty!'});
+        await sleep(Math.random() * 3000);
+        console.log("DONE SLEEP");
+        var roomQuestionCache = await redisClient.get(req.query.roomId);
+        if (roomQuestionCache) {
+            console.log("IN CACHE!");
+            var results = JSON.parse(roomQuestionCache);
+            console.log(results);
+            return res.status(200).json({message: `Retrieved question successfully!`, body: results});
         } else {
-            return res.status(200).json({message: `Retrieved question ${resp.title}, successfully!`, body: resp});
+            console.log("NOT IN CACHE!");
+            const difficulty = req.query.difficulty;
+            const resp = await _getQuestionByDiff(difficulty);
+            redisClient.setEx(req.query.roomId, 3600, JSON.stringify(resp));
+
+            if (resp.err) {
+                return res.status(400).json({message: 'Could not find a question by difficulty!'});
+            } else {
+                return res.status(200).json({message: `Retrieved question successfully!`, body: resp});
+            }
         }
     } catch (err) {
         return res.status(500).json({message: 'Database failure when finding a question by difficulty!'})

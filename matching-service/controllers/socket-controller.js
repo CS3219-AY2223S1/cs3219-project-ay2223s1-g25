@@ -37,25 +37,25 @@ const startSocket = (httpServer) => {
             console.log("Finding a match...");
 
             // User is waiting for a match/has a match
-            if (!userRoomDict[args.userId]) {
+            // if (!userRoomDict[args.userId]) {
                 const match = await MatchOrm.ormFindMatch(req);
 
                 if (match) {
                     // A match is found! This socket joins the room of the first socketId
                     const roomId = `room_${match.socketId}`;
                     console.log("match found, redirecting... " + roomId);
-                    userRoomDict[args.userId] = roomId;
+                    userRoomDict[args.userId] = { roomId: roomId, difficulty: args.difficulty };
                     await socket.join(roomId);
                     io.to(roomId).emit("matchSuccess", "Match found!");
                 } else {
                     // No match found, socket joins its own room
                     const roomId = `room_${socket.id}`;
                     console.log("no match found, waiting for rm " + roomId);
-                    userRoomDict[args.userId] = roomId;
+                    userRoomDict[args.userId] = { roomId: roomId, difficulty: args.difficulty };
                     await socket.join(roomId);
                     socket.emit("matchPending", "Waiting for match...");
                 }
-            }
+            // }
         })
 
         socket.once("timeout", async (args) => {
