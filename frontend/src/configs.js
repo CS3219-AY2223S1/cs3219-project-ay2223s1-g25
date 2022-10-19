@@ -4,6 +4,7 @@ export const API_SERVER = "http://localhost:3001";
 export const MATCHING_SERVICE = "/api/matching";
 export const COLLAB_SERVICE = "/api/collab";
 export const QUESTION_SERVICE = "/api/question";
+export const CHAT_SERVICE = "/api/chat";
 
 export function getConfig() {
   return {

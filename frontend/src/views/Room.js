@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { getMatchingSocket } from '../socket';
 import TextEditor from '../components/TextEditor'
 import Question from "../components/Question";
+import ChatBox from '../components/ChatBox';
 
 function Room() {
     const navigate = useNavigate();
@@ -29,6 +30,7 @@ function Room() {
                 direction={"column"}
                 spacing={{ xs: 1, sm: 2, md: 4 }}
                 mt={6}>
+                <ChatBox/>
                 <Button variant="contained" color="error" type="submit" size="large" onClick={() => leaveRoom()}>Leave Room</Button>
             </Stack>
         </Box>
