@@ -13,7 +13,6 @@ const io = require('socket.io')(4001, {
         roomId = data;
         socket.join(roomId);});
     socket.on("send-changes", (delta) => {
-        console.log(roomId);
         socket.to(roomId).emit("receive-changes", delta);
     });
 
