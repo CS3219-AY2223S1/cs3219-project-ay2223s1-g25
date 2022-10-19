@@ -25,15 +25,14 @@ function Question() {
             axios.get(API_SERVER + MATCHING_SERVICE + "/room", config).then(res => {
                 return res.data.difficulty;
             })
-            // .then((difficulty) => axios.get(API_SERVER + QUESTION_SERVICE + `/getQuestionByDiff?difficulty=${difficulty}`, config)
-            .then((diff) => axios.get(`http://localhost:6001/api/question/getQuestionByDiff?difficulty=${diff}`)
-                .then((res) => {
-                    setQuestion(res.data.body);
-                    setLoading(false);
-                })
-                .catch((err) => {
-                    console.log(err)
-                }))
+            .then((difficulty) => axios.get(API_SERVER + QUESTION_SERVICE + `/getQuestionByDiff?difficulty=${difficulty}`, config)
+            .then((res) => {
+                setQuestion(res.data.body);
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.log(err)
+            }))
         };
         getQuestion().catch(console.error);;
     }, [getAccessTokenSilently]);

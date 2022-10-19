@@ -9,11 +9,10 @@ app.use(cors()) // config cors so that front-end can use
 app.options('*', cors())
 
 app.get('/', (_, res) => res.send('Hello World from question-service'))
-// app.use('/api/question', apiRoutes);
 
-app.get('/api/question/getQuestionByDiff', getQuestionByDiff);
-app.get('/api/question/getQuestionByTopic', getQuestionByTopic);
-app.post('/api/question/createQuestion', createQuestion);
+app.get('/getQuestionByDiff', getQuestionByDiff);
+app.get('/getQuestionByTopic', getQuestionByTopic);
+app.post('/createQuestion', createQuestion);
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
