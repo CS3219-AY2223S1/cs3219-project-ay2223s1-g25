@@ -4,7 +4,11 @@ import { ormCreateQuestion as _createQuestion,
 
 export async function createQuestion(req, res) {
     try {
-        const { difficulty, title, description, topic, url } = req.body;
+        const difficulty = req.body.difficulty;
+        const title = req.body.title;
+        const description = req.body.description;
+        const topic = req.body.topic;
+        const url = req.body.url;
 
         if (difficulty && title && description) {
             const resp = await _createQuestion(difficulty, title, description, topic, url);
@@ -53,5 +57,3 @@ export async function getQuestionByTopic(req, res) {
         return res.status(500).json({message: 'Database failure when finding a question by topic!'})
     }
 }
-
-// module.exports = ;

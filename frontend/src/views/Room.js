@@ -3,12 +3,14 @@ import { leaveRoom } from "../utils/matching-helper"
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { getMatchingSocket } from '../socket';
+import { useAuth0 } from "@auth0/auth0-react";
 import TextEditor from '../components/TextEditor'
 import Question from "../components/Question";
 import ChatBox from '../components/ChatBox';
 
 function Room() {
     const navigate = useNavigate();
+    const { user } = useAuth0();
 
     useEffect(() => {
         getMatchingSocket().on("matchExited", () => {
@@ -31,7 +33,7 @@ function Room() {
                 spacing={{ xs: 1, sm: 2, md: 4 }}
                 mt={6}>
                 <ChatBox/>
-                <Button variant="contained" color="error" type="submit" size="large" onClick={() => leaveRoom()}>Leave Room</Button>
+                <Button variant="contained" color="error" type="submit" size="large" onClick={() => leaveRoom(user.sub)}>Leave Room</Button>
             </Stack>
         </Box>
     )

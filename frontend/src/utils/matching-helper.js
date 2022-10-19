@@ -18,8 +18,10 @@ const startMatching = (userId, difficulty, setIsShown) => {
     }
 }
 
-const leaveRoom = () => {
-    getMatchingSocket().emit("leave-room");
+const leaveRoom = (userId) => {
+    getMatchingSocket().emit("leave-room", {
+        "userId": userId
+    });
     console.log("leaving room")
 }
 

@@ -11,7 +11,7 @@ import { getConfig } from "../configs";
 function CountdownTimer({ targetTime, showTimer }) {
     const navigate = useNavigate();
     const [remainingTime, setRemainingTime] = useState(targetTime)
-    const { getAccessTokenSilently } = useAuth0();
+    const { user, getAccessTokenSilently } = useAuth0();
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -42,13 +42,17 @@ function CountdownTimer({ targetTime, showTimer }) {
         }, [])
     });
 
-    const cancelMatching = () => {
-        getMatchingSocket().emit("timeout");
+    const cancelMatching = (userId) => {
+        getMatchingSocket().emit("timeout", {
+            "userId": userId
+        });
         showTimer(false)
     }
 
     if (remainingTime <= 0) {
-        getMatchingSocket().emit("timeout");
+        getMatchingSocket().emit("timeout", {
+            "userId": user.sub
+        });
         return (
             <Stack direction="column"
             justifyContent="center"
@@ -63,7 +67,7 @@ function CountdownTimer({ targetTime, showTimer }) {
                 justifyContent="center"
                 alignItems="center">
                 <Typography sx={{ fontWeight: '500' }} marginBottom={"2rem"}>Time Remaining: {remainingTime} seconds</Typography>
-                <Button variant="contained" color="error" type="submit" size="large" onClick={() => cancelMatching()}>Cancel matching</Button>
+                <Button variant="contained" color="error" type="submit" size="large" onClick={() => cancelMatching(user.sub)}>Cancel matching</Button>
             </Stack>
         )
     }
