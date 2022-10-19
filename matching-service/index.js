@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { createServer } = require('http');
-const {startSocket, getRoomId} = require("./controllers/socket-controller.js");
+const {startSocket, getRoom} = require("./controllers/socket-controller.js");
 const {expressjwt: jwt} = require("express-jwt");
 const jwksRsa = require("jwks-rsa");
 const config = require("./config.json");
@@ -30,7 +30,7 @@ app.get('/', (req, res) => {
     res.send('Hello World from matching-service');
 });
 
-app.get('/roomId', checkJwt, getRoomId);
+app.get('/room', checkJwt, getRoom);
 
 const httpServer = createServer(app)
 startSocket(httpServer);

@@ -1,0 +1,33 @@
+version: "3.8"
+services:
+    mongo:
+        image: mongo:latest
+        volumes:
+          - ./db:/data/db
+    matching-service:
+        build:
+            context: ./matching-service
+    chat-service:
+        build:
+            context: ./chat-service
+    collab-service:
+        build:
+            context: ./collab-service
+    question-service:
+        restart: always
+        build:
+            context: ./question-service
+        depends_on:
+          - "mongo"
+    api-gateway:
+        restart: always
+        build:
+            context: ./api-gateway
+        ports:
+            - "3001:3001" 
+    frontend:
+        restart: always
+        build:
+            context: ./frontend
+        ports:
+            - "3000:3000" 
