@@ -5,6 +5,8 @@ import { useEffect } from "react";
 import { getMatchingSocket } from '../socket';
 import TextEditor from './TextEditor'
 import Question from "./Question";
+import ChatBox from './ChatBox';
+
 
 function Room() {
     const navigate = useNavigate();
@@ -17,13 +19,15 @@ function Room() {
 
     return (          
         <Box display={"flex"} flexDirection={"column"} alignItems="center" maxHeight={"80vh"}>
-            
+            <Typography variant={"h3"} margin={"1rem"}>Room</Typography>
             <Stack direction="column"
             justifyContent="center"
             alignItems="center"
             spacing={3}>
                 <Question/>
                 <TextEditor/>
+                <Skeleton variant="rounded" width={"70vw"} height={"30vw"}/>
+                <ChatBox/>
                 <Button variant="contained" color="error" type="submit" size="large" onClick={() => leaveRoom()}>Leave Room</Button>
             </Stack>
         </Box>
