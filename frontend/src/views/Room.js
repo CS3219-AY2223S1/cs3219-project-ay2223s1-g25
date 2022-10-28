@@ -7,13 +7,10 @@ import { useAuth0 } from "@auth0/auth0-react";
 import TextEditor from '../components/TextEditor'
 import Question from "../components/Question";
 import ChatBox from '../components/ChatBox';
-import { useLocation } from "react-router-dom";
 
 function Room() {
     const navigate = useNavigate();
     const { user } = useAuth0();
-    const { state } = useLocation();
-    console.log(state);
 
     useEffect(() => {
         getMatchingSocket().on("matchExited", () => {
@@ -28,7 +25,7 @@ function Room() {
                 spacing={{ xs: 1, sm: 2, md: 4 }}
                 divider={<Divider orientation="vertical" flexItem />}
                 m={2}>
-                <Question question={state}/>
+                <Question/>
                 <TextEditor/>
             </Stack>
             <Stack

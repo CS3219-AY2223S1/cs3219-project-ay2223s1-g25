@@ -6,8 +6,7 @@ import { getMatchingSocket, createCollabSocket, createChatSocket } from '../sock
 import ArrowBack from '@mui/icons-material/ArrowBack';
 import { useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
-import axios from "axios";
-import { API_SERVER, MATCHING_SERVICE, QUESTION_SERVICE, getConfig } from "../configs";
+import { getConfig } from "../configs";
 
 function CountdownTimer({ targetTime, showTimer }) {
     const navigate = useNavigate();
@@ -38,22 +37,7 @@ function CountdownTimer({ targetTime, showTimer }) {
                 });
                 createCollabSocket(accessToken);
                 createChatSocket(accessToken);
-
-                let config = { headers: {
-                    Authorization: "Bearer " + accessToken
-                }};
-                axios.get(API_SERVER + MATCHING_SERVICE + "/room", config).then(res => {
-                    return [res.data.roomId, res.data.difficulty];
-                })
-                .then((data) => {
-                    axios.get(API_SERVER + QUESTION_SERVICE + `/getQuestionByDiff?difficulty=${data[1]}&roomId=${data[0]}`, config)
-                        .then((res) => {
-                            navigate('/room', { state: res.data.body });
-                        })
-                        .catch((err) => {
-                            console.log(err)
-                        })
-                    });
+                navigate('/room');
             };
         }, [])
     });

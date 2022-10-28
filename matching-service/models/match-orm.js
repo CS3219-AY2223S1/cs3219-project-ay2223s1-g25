@@ -7,13 +7,14 @@ async function ormFindMatch(data) {
 
         if (match.otherSocketId !== null) {
             const prettyMatch = {
+                id: match.id,
                 socketId: match.socketId,
                 otherSocketId: match.otherSocketId,
                 difficulty: match.difficulty,
             };
             return prettyMatch;
         }
-        return false;
+        return match.id;
     } catch (err) {
         console.log('ERROR: Could not find a match.', err);
         return { err };
@@ -22,9 +23,10 @@ async function ormFindMatch(data) {
 
 async function ormDeleteMatch(socketId) {
     try {
-        await deleteMatch(socketId);
+        const match = await deleteMatch(socketId);
+        return match;
     } catch (err) {
-        console.log('ERROR: Could not delete a match.');
+        console.log('ERROR: Could not delete a match.', err);
         return { err };
     }
 }

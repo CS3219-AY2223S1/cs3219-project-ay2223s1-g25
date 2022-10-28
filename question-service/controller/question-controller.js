@@ -6,6 +6,32 @@ import { createClient } from 'redis';
 let redisClient = createClient();
 (async () => { await redisClient.connect(); })();
 
+const subscriber = redisClient.duplicate();
+await subscriber.connect();
+await subscriber.subscribe('matched', async (message) => {
+    message = JSON.parse(message);
+    var roomId = message.roomId;
+    var difficulty = message.difficulty;
+
+    // Call function to get a question
+    var question = await getQuestionByDiff(roomId, difficulty);
+});
+
+export async function getQuestionByRoom(req, res) {
+    // Get question from Redis
+    try {
+        var roomQuestionCache = await redisClient.get(req.query.roomId);
+        if (roomQuestionCache) {
+            var results = JSON.parse(roomQuestionCache);
+            return res.status(200).json({ message: 'Retrieved question successfully!', body: results });
+        } else {
+            return res.status(400).json({ message: 'An error occurred!' });
+        }
+    } catch (err) {
+        return res.status(500).json({ message: 'Database failure when finding a question by difficulty!', error: err });
+    }
+}
+
 export async function createQuestion(req, res) {
     try {
         const difficulty = req.body.difficulty;
@@ -32,39 +58,23 @@ export async function createQuestion(req, res) {
     }
 }
 
-function sleep(ms) {
-    return new Promise((resolve) => {
-        setTimeout(resolve, ms);
-    });
-}
-export async function getQuestionByDiff(req, res) {
+async function getQuestionByDiff(roomId, difficulty) {
     try {
-        await sleep(Math.random() * 3000);
-        console.log("DONE SLEEP");
-        var roomQuestionCache = await redisClient.get(req.query.roomId);
-        if (roomQuestionCache) {
-            console.log("IN CACHE!");
-            var results = JSON.parse(roomQuestionCache);
-            console.log(results);
-            return res.status(200).json({message: `Retrieved question successfully!`, body: results});
-        } else {
-            console.log("NOT IN CACHE!");
-            const difficulty = req.query.difficulty;
-            const resp = await _getQuestionByDiff(difficulty);
-            redisClient.setEx(req.query.roomId, 3600, JSON.stringify(resp));
+        const results = await _getQuestionByDiff(difficulty);
+        console.log(results);
+        redisClient.setEx(roomId, 3600, JSON.stringify(results));
 
-            if (resp.err) {
-                return res.status(400).json({message: 'Could not find a question by difficulty!'});
-            } else {
-                return res.status(200).json({message: `Retrieved question successfully!`, body: resp});
-            }
+        if (results.err) {
+            return { message: 'Could not find a question by difficulty!' };
+        } else {
+            return { message: `Retrieved question successfully!`, body: results };
         }
     } catch (err) {
-        return res.status(500).json({message: 'Database failure when finding a question by difficulty!'})
+        return { message: 'Database failure when finding a question by difficulty!', error: err };
     }
 }
 
-export async function getQuestionByTopic(req, res) {
+async function getQuestionByTopic(req, res) {
     try {
         const topic = req.query.topic;
         const resp = await _getQuestionByTopic(topic);
