@@ -34,7 +34,7 @@ function DifficultySelection() {
                         <FormControlLabel value="medium" control={<Radio />} label="Medium" onChange={() => setDifficulty("medium")}/>
                         <FormControlLabel value="hard" control={<Radio />} label="Hard" onChange={() => setDifficulty("hard")}/>
                     </RadioGroup>
-                    <Button variant="contained" color="success" type="submit" size="large" onClick={() => startMatching(user.sub, difficulty, setIsShown)} endIcon={<JoinRightIcon />}>Find a match</Button>
+                    <Button variant="contained" disabled={difficulty === "" ? true : false} color="success" type="submit" size="large" onClick={() => startMatching(user.sub, difficulty, setIsShown)} endIcon={<JoinRightIcon />}>Find a match</Button>
                 </Stack>
             </FormControl> )}
 
