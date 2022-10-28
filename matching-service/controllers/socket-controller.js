@@ -39,14 +39,14 @@ const startSocket = (httpServer) => {
             console.log("Finding a match...");
 
             // User is waiting for a match/has a match
-            // if (!userRoomDict[args.userId]) {
+            // if (!userRoomDict[args.userId] ) {
             const match = await MatchOrm.ormFindMatch(req);
 
             if (match instanceof Object) {
                 // A match is found! This socket joins the room of the first socketId
                 const roomId = `room_${match.id}`;
                 console.log("match found, redirecting... " + roomId);
-                userRoomDict[args.userId] = { roomId: roomId, difficulty: args.difficulty };
+                userRoomDict[args.userId] = { socketId: socket.id, roomId: roomId, difficulty: args.difficulty };
                 await socket.join(roomId);
 
                 // Pub to question service
@@ -59,10 +59,12 @@ const startSocket = (httpServer) => {
                 // No match found yet, socket joins its own room
                 const roomId = `room_${match}`;
                 console.log("no match found, waiting for rm " + roomId);
-                userRoomDict[args.userId] = { roomId: roomId, difficulty: args.difficulty };
+                userRoomDict[args.userId] = { socketId: socket.id, roomId: roomId, difficulty: args.difficulty };
                 await socket.join(roomId);
                 socket.emit("matchPending", "Waiting for match...");
             }
+            // } else {
+            //     socket.emit("duplicateSocket");
             // }
         })
 
@@ -82,6 +84,7 @@ const startSocket = (httpServer) => {
             delete userRoomDict[args.userId];
             clientsLeft = io.of("/").adapter.rooms.get(roomId).size;
 
+            // TODO: prevent crashing unexpectedly, make sure to remove from room when socket disconnects
             if (clientsLeft == 2) {
                 socket.emit("oneClientRoom");
             }
@@ -92,11 +95,27 @@ const startSocket = (httpServer) => {
             }
             await socket.leave(roomId);
         })
-    
+
+        socket.on('disconnecting', async () => {
+            // Remove socket / user from dict
+            for (const [key, value] of Object.entries(userRoomDict)) {
+                if (value.socketId === socket.id) {
+                    delete userRoomDict[key];
+                
+                    clientsLeft = io.of("/").adapter.rooms.get(value.roomId).size;
+                    if (clientsLeft == 2) {
+                        socket.emit("oneClientRoom");
+                    }
+                    if (clientsLeft == 1) {
+                        await MatchOrm.ormDeleteMatch(socket.id);
+                    }
+                    await socket.leave(value.roomId);
+                }
+            }
+        });
+
         socket.on('disconnect', () => {
             console.log(`Matching socket disconnected: ${socket.id}`);
-
-            // todo: delete user from userRoomDict
         });
     });
 }

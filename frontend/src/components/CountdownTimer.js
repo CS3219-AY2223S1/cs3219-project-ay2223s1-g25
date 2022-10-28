@@ -6,11 +6,12 @@ import { getMatchingSocket, createCollabSocket, createChatSocket } from '../sock
 import ArrowBack from '@mui/icons-material/ArrowBack';
 import { useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
-import { getConfig } from "../configs";
+import axios from "axios";
+import { API_SERVER, MATCHING_SERVICE, QUESTION_SERVICE, getConfig } from "../configs";
 
 function CountdownTimer({ targetTime, showTimer }) {
     const navigate = useNavigate();
-    const [remainingTime, setRemainingTime] = useState(targetTime)
+    const [remainingTime, setRemainingTime] = useState(targetTime);
     const { user, getAccessTokenSilently } = useAuth0();
 
     useEffect(() => {
@@ -37,16 +38,35 @@ function CountdownTimer({ targetTime, showTimer }) {
                 });
                 createCollabSocket(accessToken);
                 createChatSocket(accessToken);
-                navigate('/room');
-            };
+
+                let config = { headers: {
+                    Authorization: "Bearer " + accessToken
+                }};
+                axios.get(API_SERVER + MATCHING_SERVICE + "/room", config).then(res => {
+                    return res.data.roomId;
+                })
+                .then((data) => {
+                    axios.get(API_SERVER + QUESTION_SERVICE + `/getQuestionByRoom?roomId=${data}`, config)
+                        .then((res) => {
+                            navigate('/room', { state: res.data.body });
+                        })
+                        .catch((err) => {
+                            console.log(err)
+                        })
+                    });
+            } 
+            
+            // else if (eventName === "duplicateSocket") {
+            //     cancelMatching(user.sub);
+            // }
         }, [])
-    });
+    }, []);
 
     const cancelMatching = (userId) => {
         getMatchingSocket().emit("timeout", {
             "userId": userId
         });
-        showTimer(false)
+        showTimer(false);
     }
 
     if (remainingTime <= 0) {
