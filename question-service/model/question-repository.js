@@ -12,8 +12,8 @@ let db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', _ => { console.log('Database connected:', mongoDB) })
 
-export async function createQuestion(difficulty, title, description, topic, url) { 
-    return new QuestionModel(difficulty, title, description, topic, url);
+export async function createQuestion(questionId, title, content, difficulty, categoryTitle) { 
+    return new QuestionModel(questionId, title, content, difficulty, categoryTitle);
 }
 
 export async function getQuestionByDifficulty(difficulty) { 

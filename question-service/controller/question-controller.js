@@ -34,15 +34,14 @@ export async function getQuestionByRoom(req, res) {
 
 export async function createQuestion(req, res) {
     try {
-        const difficulty = req.body.difficulty;
+        const questionId = req.body.questionId;
         const title = req.body.title;
-        const description = req.body.description;
-        const topic = req.body.topic;
-        const url = req.body.url;
+        const content = req.body.content;
+        const difficulty = req.body.difficulty.toLowerCase();
+        const categoryTitle = req.body.categoryTitle;
 
-        if (difficulty && title && description) {
-            const resp = await _createQuestion(difficulty, title, description, topic, url);
-            console.log(resp);
+        if (questionId && difficulty && title && content && categoryTitle) {
+            const resp = await _createQuestion(questionId, title, content, difficulty, categoryTitle);
             
             if (resp.err) {
                 return res.status(400).json({message: 'Could not create a new question!'});
@@ -51,7 +50,7 @@ export async function createQuestion(req, res) {
                 return res.status(201).json({message: `Created new question: ${title}, successfully!`});
             }
         } else {
-            return res.status(400).json({message: 'Title and/or Description and/or Difficulty are missing!'});
+            return res.status(400).json({message: 'Title and/or content and/or difficulty and/or questionId are missing!'});
         }
     } catch (err) {
         return res.status(500).json({message: 'Database failure when creating new question!'})

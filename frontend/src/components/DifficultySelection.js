@@ -11,7 +11,7 @@ import {
 import { useState } from "react";
 import JoinRightIcon from '@mui/icons-material/JoinRight';
 import CountdownTimer from "./CountdownTimer.js";
-import { capitalizeFirst, startMatching } from "../utils/matching-helper.js"
+import { startMatching } from "../utils/matching-helper.js"
 import { useAuth0 } from "@auth0/auth0-react";
 
 function DifficultySelection() {
@@ -30,16 +30,16 @@ function DifficultySelection() {
                     alignItems="center"
                     spacing={3}>
                     <RadioGroup name="controlled-radio-buttons-group">
-                        <FormControlLabel value="easy" control={<Radio />} label="Easy" onChange={() => setDifficulty("easy")}/>
-                        <FormControlLabel value="medium" control={<Radio />} label="Medium" onChange={() => setDifficulty("medium")}/>
-                        <FormControlLabel value="hard" control={<Radio />} label="Hard" onChange={() => setDifficulty("hard")}/>
+                        <FormControlLabel value="easy" control={<Radio />} label="Easy" onChange={() => setDifficulty("Easy")}/>
+                        <FormControlLabel value="medium" control={<Radio />} label="Medium" onChange={() => setDifficulty("Medium")}/>
+                        <FormControlLabel value="hard" control={<Radio />} label="Hard" onChange={() => setDifficulty("Hard")}/>
                     </RadioGroup>
                     <Button variant="contained" disabled={difficulty === "" ? true : false} color="success" type="submit" size="large" onClick={() => startMatching(user.sub, difficulty, setIsShown)} endIcon={<JoinRightIcon />}>Find a match</Button>
                 </Stack>
             </FormControl> )}
 
             { isShown && <Typography variant={"h3"} marginBottom={"1.5rem"}>Looking for a match...</Typography> }
-            { isShown && <Typography variant={"subtitle1"} marginBottom={"1.5rem"}>Difficulty: {capitalizeFirst(difficulty)}</Typography> }
+            { isShown && <Typography variant={"subtitle1"} marginBottom={"1.5rem"}>Difficulty: {difficulty}</Typography> }
             { isShown && <CountdownTimer targetTime={30} showTimer={setIsShown}></CountdownTimer> }
         </Box>
     )

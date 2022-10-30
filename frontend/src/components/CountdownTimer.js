@@ -60,7 +60,7 @@ function CountdownTimer({ targetTime, showTimer }) {
             //     cancelMatching(user.sub);
             // }
         }, [])
-    }, []);
+    });
 
     const cancelMatching = (userId) => {
         getMatchingSocket().emit("timeout", {

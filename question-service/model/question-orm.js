@@ -1,8 +1,8 @@
 import { createQuestion, getQuestionByDifficulty, getQuestionByTopic } from './question-repository.js';
 
-export async function ormCreateQuestion(difficulty, title, description, topic, url) {
+export async function ormCreateQuestion(questionId, title, content, difficulty, categoryTitle) {
     try {
-        const newQuestion = await createQuestion({difficulty, title, description, topic, url});
+        const newQuestion = await createQuestion({questionId, title, content, difficulty, categoryTitle});
         newQuestion.save();
         return true;
     } catch (err) {
