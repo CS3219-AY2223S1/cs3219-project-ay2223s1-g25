@@ -1,8 +1,15 @@
+require("dotenv/config");
 const { Server } = require('socket.io')
 const MatchOrm = require("../models/match-orm.js")
 const { createClient } = require('redis');
 
-let publisher = createClient();
+let publisher = createClient({
+    socket: {
+        host: process.env.REDIS_REMOTE_HOST,
+        port: process.env.REDIS_REMOTE_PORT,
+    },
+    password: process.env.REDIS_REMOTE_PASSWORD
+});
 (async () => { await publisher.connect(); })();
 var userRoomDict = {};
 

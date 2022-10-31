@@ -1,28 +1,37 @@
+import 'dotenv/config'
 import { ormCreateQuestion as _createQuestion, 
     ormGetQuestionByDiff as _getQuestionByDiff, 
-    ormGetQuestionByTopic as _getQuestionByTopic } from '../model/question-orm.js'
-
+    ormGetQuestionByTopic as _getQuestionByTopic } from '../model/question-orm.js';
 import { createClient } from 'redis';
-let redisClient = createClient();
-(async () => { await redisClient.connect(); })();
+let redisClient;
 
-const subscriber = redisClient.duplicate();
-await subscriber.connect();
-await subscriber.subscribe('matched', async (message) => {
-    message = JSON.parse(message);
-    var roomId = message.roomId;
-    var difficulty = message.difficulty;
-
-    // Call function to get a question
-    var question = await getQuestionByDiff(roomId, difficulty);
-});
+(async () => { 
+    redisClient = createClient({
+        socket: {
+            host: process.env.REDIS_REMOTE_HOST,
+            port: process.env.REDIS_REMOTE_PORT,
+        },
+        password: process.env.REDIS_REMOTE_PASSWORD
+    });
+    
+    await redisClient.connect(); 
+    const subscriber = redisClient.duplicate();
+    await subscriber.connect();
+    await subscriber.subscribe('matched', async (message) => {
+        message = JSON.parse(message);
+        let roomId = message.roomId;
+        let difficulty = message.difficulty;
+        console.log("Creating "+ difficulty + " question for " + roomId);
+        await generateQuestionByDiff(roomId, difficulty);
+    });
+})();
 
 export async function getQuestionByRoom(req, res) {
     // Get question from Redis
     try {
-        var roomQuestionCache = await redisClient.get(req.query.roomId);
+        let roomQuestionCache = await redisClient.get(req.query.roomId);
         if (roomQuestionCache) {
-            var results = JSON.parse(roomQuestionCache);
+            let results = JSON.parse(roomQuestionCache);
             return res.status(200).json({ message: 'Retrieved question successfully!', body: results });
         } else {
             return res.status(400).json({ message: 'An error occurred!' });
@@ -57,19 +66,13 @@ export async function createQuestion(req, res) {
     }
 }
 
-async function getQuestionByDiff(roomId, difficulty) {
+async function generateQuestionByDiff(roomId, difficulty) {
     try {
         const results = await _getQuestionByDiff(difficulty);
         console.log(results);
         redisClient.setEx(roomId, 3600, JSON.stringify(results));
-
-        if (results.err) {
-            return { message: 'Could not find a question by difficulty!' };
-        } else {
-            return { message: `Retrieved question successfully!`, body: results };
-        }
     } catch (err) {
-        return { message: 'Database failure when finding a question by difficulty!', error: err };
+        console.error("Error generating question:" + err);
     }
 }
 
