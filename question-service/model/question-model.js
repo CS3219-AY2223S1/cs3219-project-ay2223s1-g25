@@ -2,23 +2,27 @@ import mongoose from 'mongoose';
 var Schema = mongoose.Schema
 
 let QuestionModelSchema = new Schema({
-    difficulty: {
+    questionId: {
         type: String,
         required: true,
     },
     title: {
         type: String,
         required: true,
-        unique: true,
     },
-    description: {
+    content: {
         type: String,
         required: true,
     },
-    topic: {
+    difficulty: {
         type: String,
+        required: true,
     },
-    adaptedFrom: { // url to original question bank
+    categoryTitle: {
+        type: String,
+        required: true,
+    },
+    hints: {
         type: String
     }
 })

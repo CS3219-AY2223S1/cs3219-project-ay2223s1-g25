@@ -1,14 +1,57 @@
+import 'dotenv/config'
 import { ormCreateQuestion as _createQuestion, 
-    ormGetQuestionByDiff as _getQuestionByDiff, 
-    ormGetQuestionByTopic as _getQuestionByTopic } from '../model/question-orm.js'
+    ormGetQuestionByDiff as _getQuestionByDiff } from '../model/question-orm.js'
+
+import { createClient } from 'redis';
+let redisClient;
+
+(async () => { 
+    redisClient = createClient({
+        socket: {
+            host: process.env.REDIS_REMOTE_HOST,
+            port: process.env.REDIS_REMOTE_PORT,
+        },
+        password: process.env.REDIS_REMOTE_PASSWORD
+    });
+    
+    await redisClient.connect(); 
+    const subscriber = redisClient.duplicate();
+    await subscriber.connect();
+    await subscriber.subscribe('matched', async (message) => {
+        message = JSON.parse(message);
+        let roomId = message.roomId;
+        let difficulty = message.difficulty;
+        let categoryTitle = message.categoryTitle;
+        console.log("Creating "+ difficulty + " question for " + roomId);
+        await generateQuestionByDiff(roomId, difficulty, categoryTitle);
+    });
+})();
+
+export async function getQuestionByRoom(req, res) {
+    // Get question from Redis
+    try {
+        let roomQuestionCache = await redisClient.get(req.query.roomId);
+        if (roomQuestionCache) {
+            let results = JSON.parse(roomQuestionCache);
+            return res.status(200).json({ message: 'Retrieved question successfully!', body: results });
+        } else {
+            return res.status(400).json({ message: 'An error occurred!' });
+        }
+    } catch (err) {
+        return res.status(500).json({ message: 'Database failure when finding a question by difficulty!', error: err });
+    }
+}
 
 export async function createQuestion(req, res) {
     try {
-        const { difficulty, title, description, topic, url } = req.body;
+        const questionId = req.body.questionId;
+        const title = req.body.title;
+        const content = req.body.content;
+        const difficulty = req.body.difficulty.toLowerCase();
+        const categoryTitle = req.body.categoryTitle;
 
-        if (difficulty && title && description) {
-            const resp = await _createQuestion(difficulty, title, description, topic, url);
-            console.log(resp);
+        if (questionId && difficulty && title && content && categoryTitle) {
+            const resp = await _createQuestion(questionId, title, content, difficulty, categoryTitle);
             
             if (resp.err) {
                 return res.status(400).json({message: 'Could not create a new question!'});
@@ -17,41 +60,18 @@ export async function createQuestion(req, res) {
                 return res.status(201).json({message: `Created new question: ${title}, successfully!`});
             }
         } else {
-            return res.status(400).json({message: 'Title and/or Description and/or Difficulty are missing!'});
+            return res.status(400).json({message: 'Title and/or content and/or difficulty and/or questionId are missing!'});
         }
     } catch (err) {
         return res.status(500).json({message: 'Database failure when creating new question!'})
     }
 }
 
-export async function getQuestionByDiff(req, res) {
+async function generateQuestionByDiff(roomId, difficulty, categoryTitle) {
     try {
-        const difficulty = req.query.difficulty;
-        const resp = await _getQuestionByDiff(difficulty);
-        
-        if (resp.err) {
-            return res.status(400).json({message: 'Could not find a question by difficulty!'});
-        } else {
-            return res.status(200).json({message: `Retrieved question ${resp.title}, successfully!`, body: resp});
-        }
+        const results = await _getQuestionByDiff(difficulty, categoryTitle);
+        redisClient.setEx(roomId, 3600, JSON.stringify(results));
     } catch (err) {
-        return res.status(500).json({message: 'Database failure when finding a question by difficulty!'})
+        console.error("Error generating question:" + err);
     }
 }
-
-export async function getQuestionByTopic(req, res) {
-    try {
-        const topic = req.query.topic;
-        const resp = await _getQuestionByTopic(topic);
-        
-        if (resp.err) {
-            return res.status(400).json({message: 'Could not find a question by topic!'});
-        } else {
-            return res.status(200).json({message: `Retrieved question ${resp.title}, successfully!`, body: resp});
-        }
-    } catch (err) {
-        return res.status(500).json({message: 'Database failure when finding a question by topic!'})
-    }
-}
-
-// module.exports = ;

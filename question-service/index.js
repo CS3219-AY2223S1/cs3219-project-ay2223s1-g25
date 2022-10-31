@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import { getQuestionByDiff, getQuestionByTopic, createQuestion } from './controller/question-controller.js';
+import { getQuestionByRoom, createQuestion } from './controller/question-controller.js';
 
 const app = express();
 app.use(express.urlencoded({ extended: true }))
@@ -10,8 +10,7 @@ app.options('*', cors())
 
 app.get('/', (_, res) => res.send('Hello World from question-service'))
 
-app.get('/getQuestionByDiff', getQuestionByDiff);
-app.get('/getQuestionByTopic', getQuestionByTopic);
+app.get('/getQuestionByRoom', getQuestionByRoom);
 app.post('/createQuestion', createQuestion);
 
 app.use(function(req, res, next) {

@@ -1,48 +1,35 @@
-import { Box, Typography, Skeleton } from "@mui/material";
+import { Box, Typography, Chip } from "@mui/material";
 import { useState, useEffect } from "react";
-import { API_SERVER, QUESTION_SERVICE, MATCHING_SERVICE } from "../configs";
-import { getConfig } from "../configs";
-import { useAuth0 } from "@auth0/auth0-react";
-import axios from "axios";
+import '../chip-colors.css';
+import '../skeleton.css' ;
+import '../question.css'
+import ReactHtmlParser from 'html-react-parser'; 
 
-function Question() {
-    const [question, setQuestion] = useState({title: "Loading...", description: "Loading..."});
-    const [loading, setLoading] = useState(false);
-    const { getAccessTokenSilently } = useAuth0();
+function Question({ question }) {
+    const [classList, setClassList] = useState("");
+    const [tagList, setTagList] = useState("");
+    const [content, setContent] = useState("");
 
     useEffect(() => {
-        setLoading(true);
-        const getQuestion = async () => {
-            const domain = getConfig().domain;
-            const accessToken = await getAccessTokenSilently({
-                audience: `https://${domain}/api/v2/`,
-                scope: "read:current_user",
-            });
-            let config = { headers: {
-                Authorization: "Bearer " + accessToken
-            }};
-            
-            axios.get(API_SERVER + MATCHING_SERVICE + "/room", config).then(res => {
-                return res.data.difficulty;
-            })
-            .then((difficulty) => axios.get(API_SERVER + QUESTION_SERVICE + `/getQuestionByDiff?difficulty=${difficulty}`, config)
-            .then((res) => {
-                setQuestion(res.data.body);
-                setLoading(false);
-            })
-            .catch((err) => {
-                console.log(err)
-            }))
-        };
-        getQuestion().catch(console.error);;
-    }, [getAccessTokenSilently]);
+        setClassList(`${question.difficulty} chip MuiChip-root MuiChip-filled MuiChip-sizeMedium MuiChip-colorDefault MuiChip-filledDefault css-gac2fo-MuiChip-root`)
+        setTagList(`${question.categoryTitle} chip MuiChip-root MuiChip-filled MuiChip-sizeMedium MuiChip-colorDefault MuiChip-filledDefault css-gac2fo-MuiChip-root`)
+        var newString = `${question.content}`.replaceAll("\\n\\n", "");
+        newString = newString.replaceAll("\\n", "<br>")
+        newString = newString.replaceAll("\\t", "")
+        newString = newString.replaceAll("<p>&nbsp;</p>", "<p></p>");
+        setContent(newString);
+    }, [question.difficulty, question.content, question.categoryTitle]);
 
     return (
-        <Box display={"flex"} flexDirection={"column"} alignItems="center" maxHeight={"80vh"}>
-            { loading && <Skeleton variant="rounded" width={"70vw"} height={"30vw"}/> }
-            { !loading && <Typography variant={"h3"} marginBottom={"1.5rem"}>{question.title}</Typography> }
-            { !loading && <Typography variant={"subtitle1"} marginBottom={"1.5rem"}>{question.description}</Typography> }
-            { !loading && <Typography variant={"subtitle1"} marginBottom={"1.5rem"}>Difficulty: {question.difficulty}</Typography> }
+        <Box display={"flex"} flexDirection={"column"} className="questionContainer">
+            <Typography variant={"h3"} marginBottom={"1.5rem"}>{question.title}</Typography>
+            <Typography variant={"subtitle1"} marginBottom={"1.5rem"}>
+                <Chip label={question.difficulty} className={classList} />
+                <Chip label={question.categoryTitle} className={tagList} />
+            </Typography>
+            <div className="question">
+                { ReactHtmlParser (content) }
+            </div>
         </Box>
     )
 }

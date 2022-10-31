@@ -2,18 +2,20 @@ const { findMatch, deleteMatch } = require('./match-repository.js');
 
 async function ormFindMatch(data) {
     try {
-        // Find a match based on the description
-        const match = await findMatch(data.socketId, data.difficulty);
+        // Find a match based on the difficulty
+        const match = await findMatch(data.socketId, data.difficulty, data.categoryTitle);
 
         if (match.otherSocketId !== null) {
             const prettyMatch = {
+                id: match.id,
                 socketId: match.socketId,
                 otherSocketId: match.otherSocketId,
                 difficulty: match.difficulty,
+                categoryTitle: match.categoryTitle
             };
             return prettyMatch;
         }
-        return false;
+        return match.id;
     } catch (err) {
         console.log('ERROR: Could not find a match.', err);
         return { err };
@@ -22,9 +24,10 @@ async function ormFindMatch(data) {
 
 async function ormDeleteMatch(socketId) {
     try {
-        await deleteMatch(socketId);
+        const match = await deleteMatch(socketId);
+        return match;
     } catch (err) {
-        console.log('ERROR: Could not delete a match.');
+        console.log('ERROR: Could not delete a match.', err);
         return { err };
     }
 }

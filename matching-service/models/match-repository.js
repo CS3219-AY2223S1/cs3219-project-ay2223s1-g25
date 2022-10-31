@@ -24,16 +24,19 @@ sequelize.sync({ force: true })
     console.log(`Database & tables created!`);
 });
 
-const findMatch = async(socketId, difficulty) => {
+const findMatch = async(socketId, difficulty, categoryTitle) => {
+    // TODO: If there is no category specified, match with any difficulty
+    // TODO: If there is no difficulty specified, match with any category
     const [match, created] = await Match.findOrCreate({
-        where: { 
+        where: {
             otherSocketId: {
                 [Op.is]: null 
             },
             socketId: {
                 [Op.ne]: socketId,
             },
-            difficulty: difficulty
+            difficulty: difficulty,
+            categoryTitle: categoryTitle
         },
         defaults: {
             socketId: socketId,
@@ -49,14 +52,25 @@ const findMatch = async(socketId, difficulty) => {
     return match;
 }
 
-const deleteMatch = async(socketId) => { 
-    await Match.destroy({
+const deleteMatch = async(socketId) => {
+    await Match.findAll({
         where: {
-            socketId: {
-                [Op.eq]: socketId,
-            }
+            [Op.or]: [
+                { socketId: socketId },
+                { otherSocketId: socketId } 
+            ]
         }
-    });
+    }).then((res) => {        
+        Match.destroy({
+            where: {
+                [Op.or]: [
+                    { socketId: socketId },
+                    { otherSocketId: socketId } 
+                ]
+            }
+        });
+        return res;
+    }).then((res) => { return res });
 }
 
 module.exports = { sequelize, findMatch, deleteMatch }

@@ -20,7 +20,11 @@ const Match = sequelize => {
             },
         difficulty: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
+        },
+        categoryTitle: {
+            type: DataTypes.STRING,
+            allowNull: true,
         },
     }, { 
         sequelize, 

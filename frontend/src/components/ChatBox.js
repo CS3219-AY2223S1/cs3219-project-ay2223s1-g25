@@ -30,9 +30,8 @@ function ChatBox() {
   useEffect(() => {
     if (getChatSocket() == null) return;
 
-    getChatSocket().on("connected", (id) => {
-      setSid(id);
-    });
+    
+    setSid(getChatSocket().id);
 
     return () => {
       getChatSocket().off("connected");

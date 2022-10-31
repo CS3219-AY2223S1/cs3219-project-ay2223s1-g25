@@ -6,12 +6,13 @@ import { getMatchingSocket, createCollabSocket, createChatSocket } from '../sock
 import ArrowBack from '@mui/icons-material/ArrowBack';
 import { useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
-import { getConfig } from "../configs";
+import axios from "axios";
+import { API_SERVER, MATCHING_SERVICE, QUESTION_SERVICE, getConfig } from "../configs";
 
-function CountdownTimer({ targetTime, showTimer }) {
+function CountdownTimer({ targetTime, showTimer, setDifficulty, setCategory }) {
     const navigate = useNavigate();
-    const [remainingTime, setRemainingTime] = useState(targetTime)
-    const { getAccessTokenSilently } = useAuth0();
+    const [remainingTime, setRemainingTime] = useState(targetTime);
+    const { user, getAccessTokenSilently } = useAuth0();
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -34,21 +35,46 @@ function CountdownTimer({ targetTime, showTimer }) {
                 const accessToken = await getAccessTokenSilently({
                     audience: `https://${domain}/api/v2/`,
                     scope: "read:current_user",
-                  });
+                });
                 createCollabSocket(accessToken);
                 createChatSocket(accessToken);
-                navigate('/room');
+
+                let config = { headers: {
+                    Authorization: "Bearer " + accessToken
+                }};
+                axios.get(API_SERVER + MATCHING_SERVICE + "/room", config).then(res => {
+                    return res.data.roomId;
+                })
+                .then((data) => {
+                    axios.get(API_SERVER + QUESTION_SERVICE + `/getQuestionByRoom?roomId=${data}`, config)
+                        .then((res) => {
+                            navigate('/room', { state: res.data.body });
+                        })
+                        .catch((err) => {
+                            console.log(err)
+                        })
+                    });
             } 
+            
+            // else if (eventName === "duplicateSocket") {
+            //     cancelMatching(user.sub);
+            // }
         }, [])
     });
 
-    const cancelMatching = () => {
-        getMatchingSocket().emit("timeout");
-        showTimer(false)
+    const cancelMatching = (userId) => {
+        getMatchingSocket().emit("timeout", {
+            "userId": userId
+        });
+        showTimer(false);
+        setDifficulty("");
+        setCategory("");
     }
 
     if (remainingTime <= 0) {
-        getMatchingSocket().emit("timeout");
+        getMatchingSocket().emit("timeout", {
+            "userId": user.sub
+        });
         return (
             <Stack direction="column"
             justifyContent="center"
@@ -63,7 +89,7 @@ function CountdownTimer({ targetTime, showTimer }) {
                 justifyContent="center"
                 alignItems="center">
                 <Typography sx={{ fontWeight: '500' }} marginBottom={"2rem"}>Time Remaining: {remainingTime} seconds</Typography>
-                <Button variant="contained" color="error" type="submit" size="large" onClick={() => cancelMatching()}>Cancel matching</Button>
+                <Button variant="contained" color="error" type="submit" size="large" onClick={() => cancelMatching(user.sub)}>Cancel matching</Button>
             </Stack>
         )
     }
