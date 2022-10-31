@@ -3,7 +3,7 @@ const { findMatch, deleteMatch } = require('./match-repository.js');
 async function ormFindMatch(data) {
     try {
         // Find a match based on the difficulty
-        const match = await findMatch(data.socketId, data.difficulty);
+        const match = await findMatch(data.socketId, data.difficulty, data.categoryTitle);
 
         if (match.otherSocketId !== null) {
             const prettyMatch = {
@@ -11,6 +11,7 @@ async function ormFindMatch(data) {
                 socketId: match.socketId,
                 otherSocketId: match.otherSocketId,
                 difficulty: match.difficulty,
+                categoryTitle: match.categoryTitle
             };
             return prettyMatch;
         }
