@@ -1,4 +1,4 @@
-import { createQuestion, getQuestionByDifficulty, getQuestionByTopic } from './question-repository.js';
+import { createQuestion, getQuestionByDifficulty } from './question-repository.js';
 
 export async function ormCreateQuestion(questionId, title, content, difficulty, categoryTitle) {
     try {
@@ -11,22 +11,12 @@ export async function ormCreateQuestion(questionId, title, content, difficulty, 
     }
 }
 
-export async function ormGetQuestionByDiff(difficulty) {
+export async function ormGetQuestionByDiff(difficulty, categoryTitle) {
     try {
-        const question = await getQuestionByDifficulty(difficulty);
+        const question = await getQuestionByDifficulty(difficulty, categoryTitle);
         return question;
     } catch (err) {
         console.log('ERROR: Could not get question by difficulty!');
-        return err;
-    }
-}
-
-export async function ormGetQuestionByTopic(topic) {
-    try {
-        const question = await getQuestionByTopic(topic);
-        return question;
-    } catch (err) {
-        console.log('ERROR: Could not get question by topic!');
         return err;
     }
 }

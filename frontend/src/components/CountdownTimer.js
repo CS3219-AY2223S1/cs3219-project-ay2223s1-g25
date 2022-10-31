@@ -9,7 +9,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import { API_SERVER, MATCHING_SERVICE, QUESTION_SERVICE, getConfig } from "../configs";
 
-function CountdownTimer({ targetTime, showTimer }) {
+function CountdownTimer({ targetTime, showTimer, setDifficulty, setCategory }) {
     const navigate = useNavigate();
     const [remainingTime, setRemainingTime] = useState(targetTime);
     const { user, getAccessTokenSilently } = useAuth0();
@@ -67,6 +67,8 @@ function CountdownTimer({ targetTime, showTimer }) {
             "userId": userId
         });
         showTimer(false);
+        setDifficulty("");
+        setCategory("");
     }
 
     if (remainingTime <= 0) {
