@@ -70,7 +70,6 @@ export async function createQuestion(req, res) {
 async function generateQuestionByDiff(roomId, difficulty, categoryTitle) {
     try {
         const results = await _getQuestionByDiff(difficulty, categoryTitle);
-        console.log(results);
         redisClient.setEx(roomId, 3600, JSON.stringify(results));
     } catch (err) {
         console.error("Error generating question:" + err);

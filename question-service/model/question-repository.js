@@ -21,6 +21,7 @@ db.once('open', _ => {
                 console.log("Question database is empty, populating questions now!");
                 let rawdata = fs.readFileSync('./seed.json');
                 let data = JSON.parse(rawdata);
+                data = data.filter(x => x.content);
                 QuestionModel.collection.insertMany(data, function(err,r) {
                     if (err) {
                         throw err;
