@@ -88,11 +88,15 @@ async function pullQuestion(titleSlug) {
   return json.data.question;
 }
 
-export async function getAllQuestionData() {
-  var baseQuestionList = await pullAllQuestions("",LIMIT,0,{});
-  var titleSlugList = baseQuestionList.map(x => x.titleSlug);
-  var questionList = [];
+var CATEGORIES = ["algorithms", "database", "shell", "concurrency"];
 
+export async function getAllQuestionData() {
+  var baseQuestionList = [];
+  for (var x in CATEGORIES) {
+    baseQuestionList.push(await pullAllQuestions(CATEGORIES[x],LIMIT,0,{ "premiumOnly": false }));
+  }  
+  var titleSlugList = baseQuestionList.flat(1).map(x => x.titleSlug);
+  var questionList = [];
   for (var x in titleSlugList) {
     questionList.push(await pullQuestion(titleSlugList[x]));
   }

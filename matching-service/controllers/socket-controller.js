@@ -34,6 +34,7 @@ const startSocket = (httpServer) => {
             const req = {
                 socketId: socket.id,
                 difficulty: args.difficulty,
+                categoryTitle: args.categoryTitle,
                 userId: args.userId
             };
             console.log("Finding a match...");
@@ -46,11 +47,11 @@ const startSocket = (httpServer) => {
                 // A match is found! This socket joins the room of the first socketId
                 const roomId = `room_${match.id}`;
                 console.log("match found, redirecting... " + roomId);
-                userRoomDict[args.userId] = { socketId: socket.id, roomId: roomId, difficulty: args.difficulty };
+                userRoomDict[args.userId] = { socketId: socket.id, roomId: roomId, difficulty: args.difficulty, categoryTitle: args.categoryTitle };
                 await socket.join(roomId);
 
                 // Pub to question service
-                publisher.publish("matched", JSON.stringify({ roomId: `${roomId}`, difficulty: `${args.difficulty}` }), function(){
+                publisher.publish("matched", JSON.stringify({ roomId: `${roomId}`, difficulty: `${args.difficulty}`, categoryTitle: `${args.categoryTitle}` }), function(){
                     process.exit(0);
                 });
 
@@ -59,7 +60,7 @@ const startSocket = (httpServer) => {
                 // No match found yet, socket joins its own room
                 const roomId = `room_${match}`;
                 console.log("no match found, waiting for rm " + roomId);
-                userRoomDict[args.userId] = { socketId: socket.id, roomId: roomId, difficulty: args.difficulty };
+                userRoomDict[args.userId] = { socketId: socket.id, roomId: roomId, difficulty: args.difficulty, categoryTitle: args.categoryTitle };
                 await socket.join(roomId);
                 socket.emit("matchPending", "Waiting for match...");
             }
@@ -68,7 +69,7 @@ const startSocket = (httpServer) => {
             // }
         })
 
-        socket.once("timeout", async (args) => {
+        socket.on("timeout", async (args) => {
             console.log("TIMEOUT");
             // No match found, delete pending match from DB
             var roomId = await MatchOrm.ormDeleteMatch(socket.id);
