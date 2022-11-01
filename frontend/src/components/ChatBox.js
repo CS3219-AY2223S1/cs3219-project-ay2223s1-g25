@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import moment from "moment";
 import { saveAs } from "file-saver";
 import { getChatSocket } from "../socket";
@@ -9,9 +9,8 @@ function ChatBox() {
   const [sid, setSid] = useState("");
   const [val, setVal] = useState("");
 
-  const chatBoxBody = document.querySelector(".chat-body");
-
   useEffect(() => {
+    const chatBoxBody = document?.querySelector(".chat-body");
     chatBoxBody.scrollTop = chatBoxBody.scrollHeight;
   }, [messages]);
 
