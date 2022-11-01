@@ -61,6 +61,7 @@ function ChatBox() {
 
       getChatSocket().emit("send-msg", msg);
       setMessages((messages) => [...messages, msg]);
+      setMessage("");
       setVal("");
     }
   };
