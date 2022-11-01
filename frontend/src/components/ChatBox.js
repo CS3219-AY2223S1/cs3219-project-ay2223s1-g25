@@ -9,10 +9,10 @@ function ChatBox() {
   const [sid, setSid] = useState("");
   const [val, setVal] = useState("");
 
-  const scrollRef = useRef(null);
+  const chatBoxBody = document.querySelector(".chat-body");
 
   useEffect(() => {
-    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+    chatBoxBody.scrollTop = chatBoxBody.scrollHeight;
   }, [messages]);
 
   useEffect(() => {
@@ -30,7 +30,6 @@ function ChatBox() {
   useEffect(() => {
     if (getChatSocket() == null) return;
 
-    
     setSid(getChatSocket().id);
 
     return () => {
@@ -97,7 +96,6 @@ function ChatBox() {
             </div>
           );
         })}
-        <div ref={scrollRef} />
       </div>
       <div className="chat-input">
         <input
