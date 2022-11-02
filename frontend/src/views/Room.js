@@ -18,6 +18,11 @@ function Room() {
         getMatchingSocket().on("matchExited", () => {
             navigate('/');
         }, [])
+
+        // TODO
+        getMatchingSocket().on("oneClientRoom", () => {
+            console.log("Friend has left the room!");
+        }, [])
     });
 
     return (          

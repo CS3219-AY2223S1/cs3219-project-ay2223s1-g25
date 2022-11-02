@@ -53,7 +53,7 @@ const startSocket = (httpServer) => {
             if (match instanceof Object) {
                 // A match is found! This socket joins the room of the first socketId
                 const roomId = `room_${match.id}`;
-                console.log("match found, redirecting... " + roomId);
+                console.log("Match found, redirecting... " + roomId);
                 userRoomDict[args.userId] = { socketId: socket.id, roomId: roomId, difficulty: args.difficulty, categoryTitle: args.categoryTitle };
                 await socket.join(roomId);
 
@@ -66,7 +66,7 @@ const startSocket = (httpServer) => {
             } else {
                 // No match found yet, socket joins its own room
                 const roomId = `room_${match}`;
-                console.log("no match found, waiting for rm " + roomId);
+                console.log("No match found, waiting for room " + roomId);
                 userRoomDict[args.userId] = { socketId: socket.id, roomId: roomId, difficulty: args.difficulty, categoryTitle: args.categoryTitle };
                 await socket.join(roomId);
                 socket.emit("matchPending", "Waiting for match...");
@@ -86,19 +86,17 @@ const startSocket = (httpServer) => {
         })
 
         socket.on("leave-room", async (args) => {
-            console.log("LEAVE ROOM");
             const [socketId, roomId] = socket.rooms;
+            console.log(`Matching socket ${socket.id} has left the room ${roomId}`);
             socket.emit("matchExited");
             delete userRoomDict[args.userId];
             clientsLeft = io.of("/").adapter.rooms.get(roomId).size;
 
             // TODO: prevent crashing unexpectedly, make sure to remove from room when socket disconnects
             if (clientsLeft == 2) {
-                socket.emit("oneClientRoom");
-            }
-            
-            // delete match only if both players have left the room
-            if (clientsLeft == 1) {
+                io.to(roomId).emit("oneClientRoom");
+            } else if (clientsLeft == 1) {
+                // delete match only if both players have left the room
                 await MatchOrm.ormDeleteMatch(socketId);
             }
             await socket.leave(roomId);
@@ -112,9 +110,8 @@ const startSocket = (httpServer) => {
                 
                     clientsLeft = io.of("/").adapter.rooms.get(value.roomId).size;
                     if (clientsLeft == 2) {
-                        socket.emit("oneClientRoom");
-                    }
-                    if (clientsLeft == 1) {
+                        io.to(value.roomId).emit("oneClientRoom");
+                    } else if (clientsLeft == 1) {
                         await MatchOrm.ormDeleteMatch(socket.id);
                     }
                     await socket.leave(value.roomId);
