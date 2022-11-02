@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import moment from "moment";
 import { saveAs } from "file-saver";
-import { getChatSocket } from "../socket";
+import { getChatSocket, getMatchingSocket } from "../socket";
 
 function ChatBox() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
+  const [chatEnabled, setChatEnabled] = useState(true);
   const [sid, setSid] = useState("");
   const [val, setVal] = useState("");
 
@@ -23,6 +24,18 @@ function ChatBox() {
 
     return () => {
       getChatSocket().off("got-msg");
+    };
+  }, []);
+
+  useEffect(() => {
+    if (getMatchingSocket() == null) return;
+
+    getMatchingSocket().on("oneClientRoom", () => {
+      setChatEnabled(false);
+    });
+
+    return () => {
+      getMatchingSocket().off("oneClientRoom");
     };
   }, []);
 
@@ -97,16 +110,26 @@ function ChatBox() {
         })}
       </div>
       <div className="chat-input">
-        <input
-          className="chat-text"
-          value={val}
-          placeholder="Send a message!"
-          onKeyDown={handleEnterKey}
-          onInput={(event) => {
-            setMessage(event.target.value);
-            setVal(event.target.value);
-          }}
-        />
+        {chatEnabled ? (
+          <input
+            className="chat-text"
+            value={val}
+            placeholder="Send a message!"
+            onKeyDown={handleEnterKey}
+            onInput={(event) => {
+              setMessage(event.target.value);
+              setVal(event.target.value);
+            }}
+          />
+        ) : (
+          <input
+            className="chat-text"
+            value={val}
+            placeholder="Send a message!"
+            disabled
+          />
+        )}
+
         <button className="chat-submit" onClick={sendMessage}>
           Send
         </button>
