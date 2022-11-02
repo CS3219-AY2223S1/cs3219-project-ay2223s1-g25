@@ -11,7 +11,9 @@ let publisher = createClient({
     password: process.env.REDIS_REMOTE_PASSWORD
 });
 (async () => { await publisher.connect(); })();
+
 var userRoomDict = {};
+var userSocketDict = {};
 
 const getRoom = (req, res) => {
     if (req.auth.sub in userRoomDict) {
@@ -34,6 +36,16 @@ const startSocket = (httpServer) => {
     })
     
     io.on('connection', (socket) => {
+        let user = socket.handshake.query.user;
+
+        if (userSocketDict[user]) {
+            // disconnect socket and send back error!
+            console.log("User exists in socket dictionary")
+            socket.emit("duplicateSocket");
+        } else {
+            userSocketDict[user] = socket.id;
+        }
+        
         console.log(`Matching socket connected: ${socket.id}`);
 
         socket.on("match", async (args) => {
@@ -71,9 +83,6 @@ const startSocket = (httpServer) => {
                 await socket.join(roomId);
                 socket.emit("matchPending", "Waiting for match...");
             }
-            // } else {
-            //     socket.emit("duplicateSocket");
-            // }
         })
 
         socket.on("timeout", async (args) => {
@@ -107,7 +116,6 @@ const startSocket = (httpServer) => {
             for (const [key, value] of Object.entries(userRoomDict)) {
                 if (value.socketId === socket.id) {
                     delete userRoomDict[key];
-                
                     clientsLeft = io.of("/").adapter.rooms.get(value.roomId).size;
                     if (clientsLeft == 2) {
                         io.to(value.roomId).emit("oneClientRoom");
@@ -120,6 +128,13 @@ const startSocket = (httpServer) => {
         });
 
         socket.on('disconnect', () => {
+            // Remove user from userSocketDict
+            for (const [key, value] of Object.entries(userSocketDict)) {
+                if (value === socket.id) {
+                    delete userSocketDict[key];
+                }
+            }
+
             console.log(`Matching socket disconnected: ${socket.id}`);
         });
     });

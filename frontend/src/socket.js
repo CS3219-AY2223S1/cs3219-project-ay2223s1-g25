@@ -19,12 +19,13 @@ const getChatSocket = () => {
     return chatSocket;
 }
 
-const createMatchingSocket = (accessToken) => {
+const createMatchingSocket = (accessToken, user) => {
     if (!matchingSocket) {
         matchingSocket = io.connect(URL, {path: MATCHING_SERVICE + "/socket.io",
-        extraHeaders: {
-            Authorization: "Bearer " + accessToken
-        }
+            query: `user=${user.sub}`,
+            extraHeaders: {
+                Authorization: "Bearer " + accessToken
+            }
         });
     }
 };
