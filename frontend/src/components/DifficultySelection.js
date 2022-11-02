@@ -4,6 +4,7 @@ import JoinRightIcon from '@mui/icons-material/JoinRight';
 import CountdownTimer from "./CountdownTimer.js";
 import { startMatching } from "../utils/matching-helper.js"
 import { useAuth0 } from "@auth0/auth0-react";
+import "../index.css"
 
 function DifficultySelection() {
     const [difficulty, setDifficulty] = useState("");
@@ -16,7 +17,7 @@ function DifficultySelection() {
     const { user } = useAuth0();
     
     useEffect(() => {
-        setIsDisabled(difficulty === "" && category === "");
+        setIsDisabled(difficulty === "" || category === "");
         if (difficulty == "Hard") {
             setShellDisabled(true);
             setConcurrencyDisabled(true);
@@ -39,7 +40,7 @@ function DifficultySelection() {
 
     return (
         <Box display={"flex"} flexDirection={"column"} alignItems="center" maxHeight={"80vh"}>
-            { !isShown && (<Typography variant={"h3"} marginBottom={"1.5rem"}>Select a Difficulty</Typography>) }
+            { !isShown && (<Typography variant={"h3"} marginBottom={"1.5rem"}>Select a Difficulty<span className="req">*</span></Typography>) }
             { !isShown && (
             <FormControl>
                 <Stack
@@ -47,19 +48,20 @@ function DifficultySelection() {
                     justifyContent="center"
                     alignItems="center"
                     spacing={3}>
-                    <RadioGroup name="controlled-radio-buttons-group" onChange={difficultySelect}>
+                    <RadioGroup name="controlled-radio-buttons-group" onChange={difficultySelect} required>
                         <FormControlLabel value="Easy" control={<Radio />} label="Easy" />
                         <FormControlLabel value="Medium" control={<Radio />} label="Medium" />
                         <FormControlLabel value="Hard" control={<Radio />} label="Hard" disabled={isHardDisabled}/>
                     </RadioGroup>
                     <FormControl fullWidth>
-                        <InputLabel id="category-select-label">Category</InputLabel>
+                        <InputLabel id="category-select-label">Category<span className="req">*</span></InputLabel>
                         <Select
                             labelId="category-select-label"
                             id="category-simple-select"
                             value={category}
                             label="Category"
-                            onChange={categorySelect}>
+                            onChange={categorySelect}
+                            required>
                             <MenuItem value={"Algorithms"}>Algorithms</MenuItem>
                             <MenuItem value={"Database"}>Database</MenuItem>
                             <MenuItem value={"Shell"} disabled={isShellDisabled}>Shell</MenuItem>
@@ -71,9 +73,8 @@ function DifficultySelection() {
             </FormControl> )}
 
             { isShown && <Typography variant={"h3"} marginBottom={"1.5rem"}>Looking for a match...</Typography> }
-            { isShown && difficulty != "" && <Typography variant={"subtitle1"}>Difficulty: {difficulty}</Typography> }
-            { isShown && category != "" && <Typography variant={"subtitle1"}>Category: {category}</Typography> }
-            { isShown && <Typography marginBottom={"1.5rem"}></Typography> }
+            { isShown && difficulty != "" && <Typography variant={"subtitle1"}>Difficulty: <span style={{fontWeight: 700}}>{difficulty}</span></Typography> }
+            { isShown && category != "" && <Typography variant={"subtitle1"} marginBottom={"1.5rem"}>Category: <span style={{fontWeight: 700}}>{category}</span></Typography> }
             { isShown && <CountdownTimer targetTime={30} showTimer={setIsShown} setDifficulty={setDifficulty} setCategory={setCategory}></CountdownTimer> }
         </Box>
     )
