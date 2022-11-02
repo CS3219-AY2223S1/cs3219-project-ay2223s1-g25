@@ -32,6 +32,7 @@ function ChatBox() {
 
     getMatchingSocket().on("oneClientRoom", () => {
       setChatEnabled(false);
+      sendDisconnectedMessage();
     });
 
     return () => {
@@ -77,6 +78,19 @@ function ChatBox() {
     }
   };
 
+  const sendDisconnectedMessage = () => {
+    const dt = moment();
+    const msg = {
+      sentBy: "chatRoom",
+      content: "User disconnected from the room",
+      date: dt.format("l"),
+      timestamp: dt.format("LT"),
+    };
+
+    getChatSocket().emit("send-msg", msg);
+    setMessages((messages) => [...messages, msg]);
+  };
+
   const handleEnterKey = (event) => {
     if (event.key === "Enter") {
       sendMessage();
@@ -93,7 +107,13 @@ function ChatBox() {
       </div>
       <div className="chat-body">
         {messages.map((msg) => {
-          if (msg.sentBy === sid) {
+          if (msg.sentBy == "chatRoom") {
+            return (
+              <div className="chat-centre">
+                <span>{msg.content}</span>
+              </div>
+            );
+          } else if (msg.sentBy === sid) {
             return (
               <div className="chat-right">
                 {msg.content}
