@@ -18,7 +18,7 @@ function DifficultySelection() {
     
     useEffect(() => {
         setIsDisabled(difficulty === "" || category === "");
-        if (difficulty == "Hard") {
+        if (difficulty === "Hard") {
             setShellDisabled(true);
             setConcurrencyDisabled(true);
         } else if (category === "Shell" || category === "Concurrency") {
@@ -73,8 +73,8 @@ function DifficultySelection() {
             </FormControl> )}
 
             { isShown && <Typography variant={"h3"} marginBottom={"1.5rem"}>Looking for a match...</Typography> }
-            { isShown && difficulty != "" && <Typography variant={"subtitle1"}>Difficulty: <span style={{fontWeight: 700}}>{difficulty}</span></Typography> }
-            { isShown && category != "" && <Typography variant={"subtitle1"} marginBottom={"1.5rem"}>Category: <span style={{fontWeight: 700}}>{category}</span></Typography> }
+            { isShown && difficulty !== "" && <Typography variant={"subtitle1"}>Difficulty: <span style={{fontWeight: 700}}>{difficulty}</span></Typography> }
+            { isShown && category !== "" && <Typography variant={"subtitle1"} marginBottom={"1.5rem"}>Category: <span style={{fontWeight: 700}}>{category}</span></Typography> }
             { isShown && <CountdownTimer targetTime={30} showTimer={setIsShown} setDifficulty={setDifficulty} setCategory={setCategory}></CountdownTimer> }
         </Box>
     )
