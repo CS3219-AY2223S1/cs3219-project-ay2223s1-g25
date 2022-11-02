@@ -61,7 +61,7 @@ function DifficultySelection() {
                             label="Category"
                             onChange={categorySelect}>
                             <MenuItem value={"Algorithms"}>Algorithms</MenuItem>
-                            <MenuItem value={"Databases"}>Databases</MenuItem>
+                            <MenuItem value={"Database"}>Database</MenuItem>
                             <MenuItem value={"Shell"} disabled={isShellDisabled}>Shell</MenuItem>
                             <MenuItem value={"Concurrency"} disabled={isConcurrencyDisabled}>Concurrency</MenuItem>
                         </Select>
