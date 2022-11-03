@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import Question from '../model/question-model.js';
 import { createClient } from 'redis';
 
@@ -13,12 +14,6 @@ chai.use(chaiHttp);
 chai.should();
 
 describe("Question", () => {
-    // beforeEach((done) => { // Before each test we empty the database
-    //     Question.deleteMany({}, (err) => { 
-    //         done();           
-    //     });
-    // });
-
     /*
     * Test the /POST route
     */
