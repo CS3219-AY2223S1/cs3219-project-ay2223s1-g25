@@ -79,10 +79,10 @@ const startSocket = (httpServer) => {
         socket.on("timeout", async (args) => {
             console.log("TIMEOUT");
             // No match found, delete pending match from DB
-            var roomId = await MatchOrm.ormDeleteMatch(socket.id);
+            var match = await MatchOrm.ormDeleteMatch(socket.id);
             delete userRoomDict[args.userId];
             socket.emit("matchFail", "Match not found!");
-            await socket.leave(roomId);
+            await socket.leave(match.id);
         })
 
         socket.on("leave-room", async (args) => {

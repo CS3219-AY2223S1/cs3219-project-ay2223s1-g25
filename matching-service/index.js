@@ -36,3 +36,5 @@ const httpServer = createServer(app)
 startSocket(httpServer);
 
 httpServer.listen(8001);
+
+module.exports = app
