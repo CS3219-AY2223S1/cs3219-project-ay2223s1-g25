@@ -4,7 +4,7 @@ export async function ormCreateQuestion(questionId, title, content, difficulty, 
     try {
         const newQuestion = await createQuestion({questionId, title, content, difficulty, categoryTitle});
         newQuestion.save();
-        return true;
+        return newQuestion;
     } catch (err) {
         console.log('ERROR: Could not create new question!');
         return { err };

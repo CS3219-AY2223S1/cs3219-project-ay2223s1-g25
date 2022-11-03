@@ -35,7 +35,7 @@ export async function getQuestionByRoom(req, res) {
             let results = JSON.parse(roomQuestionCache);
             return res.status(200).json({ message: 'Retrieved question successfully!', body: results });
         } else {
-            return res.status(400).json({ message: 'An error occurred!' });
+            return res.status(400).json({ errors: 'An error occurred!' });
         }
     } catch (err) {
         return res.status(500).json({ message: 'Database failure when finding a question by difficulty!', error: err });
@@ -57,10 +57,10 @@ export async function createQuestion(req, res) {
                 return res.status(400).json({message: 'Could not create a new question!'});
             } else {
                 console.log(`Created new question: ${title}, successfully!`)
-                return res.status(201).json({message: `Created new question: ${title}, successfully!`});
+                return res.status(201).json({message: `Created new question: ${title}, successfully!`, body: resp});
             }
         } else {
-            return res.status(400).json({message: 'Title and/or content and/or difficulty and/or questionId are missing!'});
+            return res.status(400).json({errors: 'Title and/or content and/or difficulty and/or questionId are missing!'});
         }
     } catch (err) {
         return res.status(500).json({message: 'Database failure when creating new question!'})
