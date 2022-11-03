@@ -3,10 +3,10 @@ name: Run unit tests
 on:
   push:
     branches: [ "main" ]
-    paths: [ "question-service/**" ]
+    paths: [ "question-service/**", "matching-service/**" ]
   pull_request:
     branches: [ "main" ]
-    paths: [ "question-service/**" ]
+    paths: [ "question-service/**", "matching-service/**" ]
 
 jobs:
   test:
