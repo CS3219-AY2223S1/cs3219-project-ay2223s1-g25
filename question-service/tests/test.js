@@ -2,17 +2,6 @@ import Question from '../model/question-model.js';
 import { createClient } from 'redis';
 
 let redisClient;
-(async () => { 
-    redisClient = createClient({
-        socket: {
-            host: process.env.REDIS_REMOTE_HOST,
-            port: process.env.REDIS_REMOTE_PORT,
-        },
-        password: process.env.REDIS_REMOTE_PASSWORD
-    });
-    
-    await redisClient.connect(); 
-})
 
 // Dev dependencies
 import chai from "chai";
@@ -24,11 +13,11 @@ chai.use(chaiHttp);
 chai.should();
 
 describe("Question", () => {
-    beforeEach((done) => { // Before each test we empty the database
-        Question.deleteMany({}, (err) => { 
-            done();           
-        });        
-    });
+    // beforeEach((done) => { // Before each test we empty the database
+    //     Question.deleteMany({}, (err) => { 
+    //         done();           
+    //     });
+    // });
 
     /*
     * Test the /POST route
