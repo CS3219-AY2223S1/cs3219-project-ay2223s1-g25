@@ -42,3 +42,8 @@ jobs:
       working-directory: ./question-service
     - run: npm test
       working-directory: ./question-service
+
+    - run: npm ci
+      working-directory: ./matching-service
+    - run: npm test
+      working-directory: ./matching-service
