@@ -33,25 +33,39 @@ body {
 }
 
 .chat-left {
-  background: lightsteelblue;
+  background: gainsboro;
   border: 1px;
   border-radius: 5px;
   margin: 15px;
   padding: 8px;
   font-size: 13px;
   width: fit-content;
+  max-width: 50%;
   margin-right: auto;
   word-wrap: break-word;
 }
 
+.chat-centre {
+  background: #dfd3c3;
+  border: 1px;
+  border-radius: 5px;
+  margin: 15px;
+  padding: 8px 20px 8px 20px;
+  font-size: 13px;
+  width: fit-content;
+  margin: auto;
+  word-wrap: break-word;
+}
+
 .chat-right {
-  background: gainsboro;
+  background: lightsteelblue;
   border: 1px;
   border-radius: 5px;
   padding: 8px;
   margin: 15px;
   font-size: 13px;
   margin-left: auto;
+  max-width: 50%;
   width: fit-content;
   word-wrap: break-word;
 }

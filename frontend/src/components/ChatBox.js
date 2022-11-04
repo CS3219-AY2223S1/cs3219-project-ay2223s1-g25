@@ -1,18 +1,18 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import moment from "moment";
 import { saveAs } from "file-saver";
-import { getChatSocket } from "../socket";
+import { getChatSocket, getMatchingSocket } from "../socket";
 
 function ChatBox() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
+  const [chatEnabled, setChatEnabled] = useState(true);
   const [sid, setSid] = useState("");
   const [val, setVal] = useState("");
 
-  const scrollRef = useRef(null);
-
   useEffect(() => {
-    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+    const chatBoxBody = document?.querySelector(".chat-body");
+    chatBoxBody.scrollTop = chatBoxBody.scrollHeight;
   }, [messages]);
 
   useEffect(() => {
@@ -28,9 +28,21 @@ function ChatBox() {
   }, []);
 
   useEffect(() => {
+    if (getMatchingSocket() == null) return;
+
+    getMatchingSocket().on("oneClientRoom", () => {
+      setChatEnabled(false);
+      sendDisconnectedMessage();
+    });
+
+    return () => {
+      getMatchingSocket().off("oneClientRoom");
+    };
+  }, []);
+
+  useEffect(() => {
     if (getChatSocket() == null) return;
 
-    
     setSid(getChatSocket().id);
 
     return () => {
@@ -61,8 +73,22 @@ function ChatBox() {
 
       getChatSocket().emit("send-msg", msg);
       setMessages((messages) => [...messages, msg]);
+      setMessage("");
       setVal("");
     }
+  };
+
+  const sendDisconnectedMessage = () => {
+    const dt = moment();
+    const msg = {
+      sentBy: "chatRoom",
+      content: "User disconnected from the room",
+      date: dt.format("l"),
+      timestamp: dt.format("LT"),
+    };
+
+    getChatSocket().emit("send-msg", msg);
+    setMessages((messages) => [...messages, msg]);
   };
 
   const handleEnterKey = (event) => {
@@ -81,7 +107,13 @@ function ChatBox() {
       </div>
       <div className="chat-body">
         {messages.map((msg) => {
-          if (msg.sentBy === sid) {
+          if (msg.sentBy == "chatRoom") {
+            return (
+              <div className="chat-centre">
+                <span>{msg.content}</span>
+              </div>
+            );
+          } else if (msg.sentBy === sid) {
             return (
               <div className="chat-right">
                 {msg.content}
@@ -96,19 +128,28 @@ function ChatBox() {
             </div>
           );
         })}
-        <div ref={scrollRef} />
       </div>
       <div className="chat-input">
-        <input
-          className="chat-text"
-          value={val}
-          placeholder="Send a message!"
-          onKeyDown={handleEnterKey}
-          onInput={(event) => {
-            setMessage(event.target.value);
-            setVal(event.target.value);
-          }}
-        />
+        {chatEnabled ? (
+          <input
+            className="chat-text"
+            value={val}
+            placeholder="Send a message!"
+            onKeyDown={handleEnterKey}
+            onInput={(event) => {
+              setMessage(event.target.value);
+              setVal(event.target.value);
+            }}
+          />
+        ) : (
+          <input
+            className="chat-text"
+            value={val}
+            placeholder="Send a message!"
+            disabled
+          />
+        )}
+
         <button className="chat-submit" onClick={sendMessage}>
           Send
         </button>
