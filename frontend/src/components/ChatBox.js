@@ -107,7 +107,7 @@ function ChatBox() {
       </div>
       <div className="chat-body">
         {messages.map((msg) => {
-          if (msg.sentBy == "chatRoom") {
+          if (msg.sentBy === "chatRoom") {
             return (
               <div className="chat-centre">
                 <span>{msg.content}</span>

@@ -1,4 +1,4 @@
-import { getMatchingSocket } from '../socket';
+import { getMatchingSocket, resetCollabSocket, resetChatSocket } from '../socket';
 
 const capitalizeFirst = str => {
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -23,6 +23,8 @@ const leaveRoom = (userId) => {
     getMatchingSocket().emit("leave-room", {
         "userId": userId
     });
+    resetCollabSocket();
+    resetChatSocket();
     console.log("leaving room")
 }
 

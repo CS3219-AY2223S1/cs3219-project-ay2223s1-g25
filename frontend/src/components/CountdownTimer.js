@@ -80,7 +80,7 @@ function CountdownTimer({ targetTime, showTimer, setDifficulty, setCategory }) {
             justifyContent="center"
             alignItems="center">
                 <Typography sx={{ fontWeight: '500' }} marginBottom={"2rem"} color="red">No match found! Try again in a few minutes!</Typography>
-                <Button variant="contained" color="secondary" type="submit" size="large" onClick={() => showTimer(false)} startIcon={<ArrowBack />}>Back</Button>
+                <Button variant="contained" color="secondary" type="submit" size="large" onClick={() => cancelMatching(user.sub)} startIcon={<ArrowBack />}>Back</Button>
             </Stack>
         )
     } else {

@@ -7,6 +7,9 @@ var matchingSocket;
 var collabSocket;
 var chatSocket;
 
+let chatSocketCreated = false;
+let collabSocketCreated = false;
+
 const getMatchingSocket = () => {
     return matchingSocket;
 }
@@ -19,18 +22,31 @@ const getChatSocket = () => {
     return chatSocket;
 }
 
-const createMatchingSocket = (accessToken) => {
+const resetCollabSocket = () => {
+    collabSocket.disconnect();
+    collabSocket.close();
+    collabSocketCreated = false;
+}
+
+const resetChatSocket = () => {
+    chatSocket.disconnect();
+    chatSocket.close();
+    chatSocketCreated = false;
+}
+
+const createMatchingSocket = (accessToken, user) => {
     if (!matchingSocket) {
         matchingSocket = io.connect(URL, {path: MATCHING_SERVICE + "/socket.io",
-        extraHeaders: {
-            Authorization: "Bearer " + accessToken
-        }
+            query: `user=${user.sub}`,
+            extraHeaders: {
+                Authorization: "Bearer " + accessToken
+            }
         });
     }
 };
 
 const createCollabSocket = (accessToken) => {
-    if (!collabSocket) {
+    if (!collabSocketCreated) {
         collabSocket = io.connect(URL, {path: COLLAB_SERVICE + "/socket.io",
         extraHeaders: {
             Authorization: "Bearer " + accessToken
@@ -46,11 +62,12 @@ const createCollabSocket = (accessToken) => {
                 collabSocket.emit('signin', roomId);
             })
         });
+        collabSocketCreated = true;
     }
 }
 
 const createChatSocket = (accessToken) => {
-    if (!chatSocket) {
+    if (!chatSocketCreated) {
         chatSocket = io.connect(URL, {path: CHAT_SERVICE + "/socket.io",
         extraHeaders: {
             Authorization: "Bearer " + accessToken
@@ -66,7 +83,8 @@ const createChatSocket = (accessToken) => {
                 chatSocket.emit('signin', roomId);
             })
         });
+        chatSocketCreated = true;
     }
 }
 
-export {getMatchingSocket, getCollabSocket, getChatSocket, createMatchingSocket, createCollabSocket, createChatSocket};
+export {getMatchingSocket, getCollabSocket, getChatSocket, createMatchingSocket, createCollabSocket, createChatSocket, resetCollabSocket, resetChatSocket};

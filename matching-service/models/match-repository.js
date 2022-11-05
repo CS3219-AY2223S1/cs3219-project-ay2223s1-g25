@@ -25,8 +25,6 @@ sequelize.sync({ force: true })
 });
 
 const findMatch = async(socketId, difficulty, categoryTitle) => {
-    // TODO: If there is no category specified, match with any difficulty
-    // TODO: If there is no difficulty specified, match with any category
     const [match, created] = await Match.findOrCreate({
         where: {
             otherSocketId: {

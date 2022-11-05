@@ -24,10 +24,4 @@ services:
         build:
             context: ./api-gateway
         ports:
-            - "3001:3001" 
-    frontend:
-        restart: always
-        build:
-            context: ./frontend
-        ports:
-            - "3000:3000" 
+            - "3001:3001"
