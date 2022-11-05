@@ -47,18 +47,21 @@ const findMatch = async(socketId, difficulty, categoryTitle) => {
         await match.save();
     }
 
-    return match;
+    return {
+        match: match, 
+        created: created
+    };
 }
 
 const deleteMatch = async(socketId) => {
-    await Match.findAll({
+    const match = await Match.findAll({
         where: {
             [Op.or]: [
                 { socketId: socketId },
                 { otherSocketId: socketId } 
             ]
         }
-    }).then((res) => {        
+    }).then((res) => {
         Match.destroy({
             where: {
                 [Op.or]: [
@@ -68,7 +71,9 @@ const deleteMatch = async(socketId) => {
             }
         });
         return res;
-    }).then((res) => { return res });
+    })
+    
+    return match[0];
 }
 
 module.exports = { sequelize, findMatch, deleteMatch }

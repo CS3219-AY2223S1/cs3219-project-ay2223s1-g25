@@ -22,3 +22,5 @@ app.use(function(req, res, next) {
 });
 
 app.listen(6001, () => console.log('Question-service listening on port 6001'));
+
+export default app;
