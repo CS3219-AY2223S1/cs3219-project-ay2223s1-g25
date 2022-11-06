@@ -37,6 +37,14 @@ app.use(morgan("dev"));
 app.use(helmet());
 app.use(cors({ origin: appOrigin }));
 
+const catchUnauthorizedError = function(err, req, res, next) {
+  if(err.name === 'UnauthorizedError') {
+    res.status(err.status).send({message:err.message});
+    return;
+  }
+  next();
+}
+
 const checkJwt = jwt({
   secret: jwksRsa.expressJwtSecret({
     cache: true,
@@ -50,10 +58,10 @@ const checkJwt = jwt({
   algorithms: ["RS256"],
 });
 
-app.use("/api/collab", checkJwt, collabServiceProxy);
-app.use("/api/chat", checkJwt, chatServiceProxy);
-app.use("/api/question", checkJwt, questionServiceProxy);
-app.use("/api/matching", checkJwt, matchingServiceProxy);
+app.use("/api/collab", checkJwt, catchUnauthorizedError, collabServiceProxy);
+app.use("/api/chat", checkJwt, catchUnauthorizedError, chatServiceProxy);
+app.use("/api/question", checkJwt, catchUnauthorizedError, questionServiceProxy);
+app.use("/api/matching", checkJwt, catchUnauthorizedError, matchingServiceProxy);
 
 app.get("/", (req, res) => {
   res.send({
