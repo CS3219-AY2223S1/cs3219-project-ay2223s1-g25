@@ -5,10 +5,9 @@ import QuestionModel from './question-model.js';
 import mongoose from 'mongoose';
 import fs from 'fs';
 
-let mongoDB = process.env.DB_CLOUD_URI;
-if (!mongoDB) {
-    console.error("No database URI found, not starting question service.");
-    process.exit(1);
+let mongoDB = process.env.ENV == "PROD" ? process.env.DB_CLOUD_URI : "mongodb://localhost/question-service";
+if (mongoDB.includes("localhost")) {
+    console.log("Using localhost database...");
 }
 
 mongoose.connect(mongoDB, { useNewUrlParser: true , useUnifiedTopology: true});
