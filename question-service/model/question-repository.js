@@ -5,14 +5,17 @@ import QuestionModel from './question-model.js';
 import mongoose from 'mongoose';
 import fs from 'fs';
 
-let mongoDB = process.env.ENV == "PROD" ? process.env.DB_DOCKER_URI : process.env.DB_LOCAL_URI;
+let mongoDB = process.env.ENV == "PROD" ? process.env.DB_CLOUD_URI : "mongodb://localhost/question-service";
+if (mongoDB.includes("localhost")) {
+    console.log("Using localhost database...");
+}
 
 mongoose.connect(mongoDB, { useNewUrlParser: true , useUnifiedTopology: true});
 
 let db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', _ => { 
-    console.log('Database connected:', mongoDB);
+    console.log('Database connected!');
     QuestionModel.find({}, function(err, docs) {
         if (err) { 
             throw err;
