@@ -11,12 +11,12 @@ const initSocket = () => {
             "force new connection": true,
         });
 
-        socket._connectTimer = setTimeout(function() {
-            socket.close();
+        const timer = setTimeout(() => {
+            reject(new Error("Failed to connect wihtin 5 seconds."));
         }, 5000);
 
         socket.on("connected", () => {
-            clearTimeout(socket._connectTimer);
+            clearTimeout(timer);
             resolve(socket);
         });
     });
@@ -43,14 +43,15 @@ describe("test suit: Collab Service", () => {
         
     test("test: Connect two clients", async () => {
         const serverResponse = new Promise(async (resolve, reject) => {
+            const timer = setTimeout(() => {
+                reject(new Error("Failed to get reponse, connection timed out..."));
+            }, 3000);
             const socketC = await initSocket();
             const socketC1 = await initSocket();
             socketClient = socketC;
             socketClient1 = socketC1;
+            clearTimeout(timer);
             resolve([socketC,socketC1])
-            setTimeout(() => {
-                reject(new Error("Failed to get reponse, connection timed out..."));
-            }, 3000);
         });
         const message  = await serverResponse;
         expect(message[0]).not.toBe(message[1]);
@@ -58,15 +59,16 @@ describe("test suit: Collab Service", () => {
 
     test("test: Join Same Room", async () => {
         const serverResponse = new Promise(async (resolve, reject) => {
+            const timer = setTimeout(() => {
+                reject(new Error("Failed to get reponse, connection timed out..."));
+            }, 3000);
             await socketClient.emit("signin", "roomid123");
             await socketClient1.emit("signin", "roomid123");
             var it = app.sockets.adapter.rooms.get(socketClient.id).values();
             var first = it.next();
             var value = first.value;
+            clearTimeout(timer);
             resolve(value);
-            setTimeout(() => {
-                reject(new Error("Failed to get reponse, connection timed out..."));
-            }, 3000);
         });
 
         const message  = await serverResponse;
@@ -75,14 +77,14 @@ describe("test suit: Collab Service", () => {
 
     test("test: Send Message", async () => {
         const serverResponse = new Promise(async (resolve, reject) => {
+            const timer = setTimeout(() => {
+                reject(new Error("Failed to get reponse, connection timed out..."));
+            }, 3000);
             await socketClient.emit("send-changes", "this is a random string");
             socketClient1.on("receive-changes", data => {
-            resolve(data);
+                clearTimeout(timer);
+                resolve(data);
             });
-    
-            setTimeout(() => {
-            reject(new Error("Failed to get reponse, connection timed out..."));
-            }, 3000);
       });
 
       const message  = await serverResponse;
