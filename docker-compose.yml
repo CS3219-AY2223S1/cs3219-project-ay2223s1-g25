@@ -1,9 +1,5 @@
 version: "3.8"
 services:
-    mongo:
-        image: mongo:latest
-        volumes:
-          - ./db:/data/db
     matching-service:
         build:
             context: ./matching-service
@@ -14,11 +10,8 @@ services:
         build:
             context: ./collab-service
     question-service:
-        restart: always
         build:
             context: ./question-service
-        depends_on:
-          - "mongo"
     api-gateway:
         restart: always
         build:
