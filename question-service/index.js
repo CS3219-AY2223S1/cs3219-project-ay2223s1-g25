@@ -3,9 +3,7 @@ import cors from 'cors';
 import { getQuestionByRoom, createQuestion, getAllQuestions } from './controller/question-controller.js';
 import {expressjwt as jwt} from "express-jwt";
 import jwksRsa from "jwks-rsa";
-import path from 'path';
 import { existsSync, readFileSync } from 'fs';
-
 
 const configPath = "./config.json";
 let config;
