@@ -3,13 +3,17 @@ import cors from 'cors';
 import { getQuestionByRoom, createQuestion, getAllQuestions } from './controller/question-controller.js';
 import {expressjwt as jwt} from "express-jwt";
 import jwksRsa from "jwks-rsa";
+import path from 'path';
+import { existsSync, readFileSync } from 'fs';
 
-import { readFile } from 'fs/promises';
-const config = JSON.parse(
-  await readFile(
-    new URL('./config.json', import.meta.url)
-  )
-);
+
+const configPath = "./config.json";
+let config;
+if (existsSync(configPath)) {
+    config = JSON.parse(readFileSync(configPath));
+} else {
+  console.log("No configuration found! Authentication will not work.");
+}
 
 const app = express();
 app.use(express.urlencoded({ extended: true }))
