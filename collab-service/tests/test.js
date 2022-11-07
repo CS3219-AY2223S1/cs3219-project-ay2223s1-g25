@@ -4,20 +4,21 @@ const app = require("../server");
 
 const initSocket = () => {
     return new Promise((resolve, reject) => {
-      const port = 4001;
-      const socket = io(`http://localhost:${port}`, {
-        "reconnection delay": 0,
-        "reopen delay": 0,
-        "force new connection": true,
-      });
-  
-      socket.on("connected", () => {
-        resolve(socket);
-      });
+        const port = 4001;
+        const socket = io(`http://localhost:${port}`, {
+            "reconnection delay": 0,
+            "reopen delay": 0,
+            "force new connection": true,
+        });
 
-      setTimeout(() => {
-        reject(new Error("Failed to connect within 5 seconds."));
-      }, 5000);
+        const timer = setTimeout(() => {
+            reject(new Error("Failed to connect wihtin 5 seconds."));
+        }, 5000);
+
+        socket.on("connected", () => {
+            clearTimeout(timer);
+            resolve(socket);
+        });
     });
 };
 
@@ -42,14 +43,15 @@ describe("test suit: Collab Service", () => {
         
     test("test: Connect two clients", async () => {
         const serverResponse = new Promise(async (resolve, reject) => {
+            const timer = setTimeout(() => {
+                reject(new Error("Failed to get reponse, connection timed out..."));
+            }, 3000);
             const socketC = await initSocket();
             const socketC1 = await initSocket();
             socketClient = socketC;
             socketClient1 = socketC1;
+            clearTimeout(timer);
             resolve([socketC,socketC1])
-            setTimeout(() => {
-                reject(new Error("Failed to get reponse, connection timed out..."));
-            }, 5000);
         });
         const message  = await serverResponse;
         expect(message[0]).not.toBe(message[1]);
@@ -57,15 +59,16 @@ describe("test suit: Collab Service", () => {
 
     test("test: Join Same Room", async () => {
         const serverResponse = new Promise(async (resolve, reject) => {
+            const timer = setTimeout(() => {
+                reject(new Error("Failed to get reponse, connection timed out..."));
+            }, 3000);
             await socketClient.emit("signin", "roomid123");
             await socketClient1.emit("signin", "roomid123");
             var it = app.sockets.adapter.rooms.get(socketClient.id).values();
             var first = it.next();
             var value = first.value;
+            clearTimeout(timer);
             resolve(value);
-            setTimeout(() => {
-                reject(new Error("Failed to get reponse, connection timed out..."));
-            }, 5000);
         });
 
         const message  = await serverResponse;
@@ -73,17 +76,15 @@ describe("test suit: Collab Service", () => {
     }, 10000);
 
     test("test: Send Message", async () => {
-        const serverResponse = new Promise((resolve, reject) => {
-            socketClient.emit("send-changes", "this is a random string");
+        const serverResponse = new Promise(async (resolve, reject) => {
+            const timer = setTimeout(() => {
+                reject(new Error("Failed to get reponse, connection timed out..."));
+            }, 3000);
+            await socketClient.emit("send-changes", "this is a random string");
             socketClient1.on("receive-changes", data => {
-            destroySocket(socketClient);
-            destroySocket(socketClient1);
-            resolve(data);
+                clearTimeout(timer);
+                resolve(data);
             });
-    
-            setTimeout(() => {
-            reject(new Error("Failed to get reponse, connection timed out..."));
-            }, 5000);
       });
 
       const message  = await serverResponse;
@@ -91,7 +92,10 @@ describe("test suit: Collab Service", () => {
 
     }, 10000);
 
-    afterAll(() => {
+    afterAll((done) => {
+        destroySocket(socketClient);
+        destroySocket(socketClient1);
         app.close();
+        done()
     });
 })

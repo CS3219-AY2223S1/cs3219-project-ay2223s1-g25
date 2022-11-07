@@ -1,12 +1,12 @@
-name: Run matching-service unit tests
+name: Run collab-service unit tests
 
 on:
   push:
     branches: [ "main" ]
-    paths: [ "matching-service/**" ]
+    paths: [ "collab-service/**" ]
   pull_request:
     branches: [ "main" ]
-    paths: [ "matching-service/**" ]
+    paths: [ "collab-service/**" ]
 
 jobs:
   test:
@@ -24,9 +24,9 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        cache-dependency-path: './matching-service/package-lock.json'
+        cache-dependency-path: './collab-service/package-lock.json'
 
     - run: npm ci
-      working-directory: ./matching-service
+      working-directory: ./collab-service
     - run: npm test
-      working-directory: ./matching-service
+      working-directory: ./collab-service
