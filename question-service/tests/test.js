@@ -19,7 +19,7 @@ describe("Question", () => {
     */
     describe("POST /createQuestion", () => {
         // Test to create a question
-        it("should create a question", (done) => {
+        it("should not create a question", (done) => {
             chai.request(app)
                 .post('/createQuestion')
                 .set('content-type', 'application/x-www-form-urlencoded')
@@ -31,13 +31,7 @@ describe("Question", () => {
                     categoryTitle: "Shell"
                 })
                 .end((err, res) => {
-                    res.should.have.status(201);
-                    res.body.should.be.a('object');
-                    res.body.body.should.have.property('questionId');
-                    res.body.body.should.have.property('title');
-                    res.body.body.should.have.property('content');
-                    res.body.body.should.have.property('difficulty');
-                    res.body.body.should.have.property('categoryTitle');
+                    res.should.have.status(401);
                 done();
                 });
         });
