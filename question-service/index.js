@@ -6,7 +6,10 @@ import jwksRsa from "jwks-rsa";
 import { existsSync, readFileSync } from 'fs';
 
 const configPath = "./config.json";
-let config;
+let config = {
+  "domain": "",
+  "audience": ""
+};
 if (existsSync(configPath)) {
     config = JSON.parse(readFileSync(configPath));
 } else {
