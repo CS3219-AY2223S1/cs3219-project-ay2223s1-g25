@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import { ormCreateQuestion as _createQuestion, 
-    ormGetQuestionByDiff as _getQuestionByDiff } from '../model/question-orm.js'
+    ormGetQuestionByDiff as _getQuestionByDiff,
+    ormGetAllQuestions as _getAllQuestions } from '../model/question-orm.js'
 
 import { createClient } from 'redis';
 let redisClient;
@@ -73,5 +74,19 @@ async function generateQuestionByDiff(roomId, difficulty, categoryTitle) {
         redisClient.setEx(roomId, 3600, JSON.stringify(results));
     } catch (err) {
         console.error("Error generating question:" + err);
+    }
+}
+
+export async function getAllQuestions(req, res) {
+    // Get question from Redis
+    try {
+        const results = await _getAllQuestions();
+        if (results) {
+            return res.status(200).json({ message: 'Retrieved all questions successfully!', body: results });
+        } else {
+            return res.status(400).json({ errors: 'An error occurred!' });
+        }
+    } catch (err) {
+        return res.status(500).json({ message: 'Database failure when finding a question by difficulty!', error: err });
     }
 }
