@@ -1,5 +1,8 @@
 const io = require("socket.io-client");
 const app = require("../server");
+const moment = require('moment');
+
+
 
 const initSocket = () => {
   return new Promise((resolve, reject) => {
@@ -75,11 +78,19 @@ describe("test suit: Chat Service", () => {
   }, 10000);
 
   test("test: Send Message", async () => {
+    const dt = moment();
     const serverResponse = new Promise(async (resolve, reject) => {
       const timer = setTimeout(() => {
         reject(new Error("Failed to get reponse, connection timed out..."));
       }, 3000);
-      await socketClient.emit("send-msg", "this is a random string");
+     
+      const msg = {
+        sentBy: socketClient.id,
+        content: "this is a random string",
+        date: dt.format("l"),
+        timestamp: dt.format("LT"),
+      };
+      await socketClient.emit("send-msg", msg);
       socketClient1.on("got-msg", (data) => {
         clearTimeout(timer);
         resolve(data);
@@ -87,7 +98,10 @@ describe("test suit: Chat Service", () => {
     });
 
     const message = await serverResponse;
-    expect(message).toBe("this is a random string");
+    expect(message.sentBy).toBe(socketClient.id);
+    expect(message.content).toBe("this is a random string");
+    expect(message.date).toBe(dt.format("l"));
+    expect(message.timestamp).toBe(dt.format("LT"));
   }, 10000);
 
   afterAll((done) => {
