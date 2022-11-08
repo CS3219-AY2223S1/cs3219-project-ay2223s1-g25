@@ -30,7 +30,7 @@ const getRoom = (req, res) => {
 const startSocket = (httpServer) => {
     const io = new Server(httpServer, {
         cors: {
-            origin: "http://localhost:3000",
+            origin: process.env.APP_ORIGIN,
             methods: ["GET", "POST"]
         }
     })
