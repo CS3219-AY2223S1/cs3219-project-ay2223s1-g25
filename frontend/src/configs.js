@@ -1,6 +1,6 @@
-import configJson from "./auth_config.json";
+import configJson from "./config.json";
 
-export const API_SERVER = "https://www.lkldev.me";
+export const API_SERVER = configJson.API_URL;
 export const MATCHING_SERVICE = "/api/matching";
 export const COLLAB_SERVICE = "/api/collab";
 export const QUESTION_SERVICE = "/api/question";
