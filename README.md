@@ -59,6 +59,16 @@ If you would like to run each services individually, you may go into the service
 
 **NOTE: Ensure you did not set the `env` in `config.json` in API gateway to `PROD` as that will NOT connect to the services running locally.**
 
+### Populate Question Service
+1. Rename `config-sample.json` file to `config.json`.
+2. Using the Auth0 Application created, enter the `domain`, `clientId` and `audience` respectively into the `config.json` file.
+3. The `API_URL` variable should point to where your backend is running. Default value is `http://localhost:3001`
+4. Rename `.env-sample` file to `.env`.
+5. Using the Auth0 Application created, enter the `CLIENT_SECRET` into the `.env` file.
+6. Create your own user in Auth0 (Auth0 -> user management -> create user)
+7. Using the user you created in Auth0, enter the `USER_NAME` and `PASSWORD` respectively into the `.env` file.
+8. Run service using `node populateQuestions.js` and wait about 1 minute.
+
 ## Setup Frontend
 1. Rename `config-sample.json` file to `config.json`.
 1. The `API_URL` variable should point to where your backend is running. Default value is `http://localhost:3001`
