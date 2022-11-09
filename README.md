@@ -25,6 +25,7 @@ All our backend services are dockerized and can run using docker compose. Howeve
 ### API Gateway
 1. Rename `config-sample.json` file to `config.json`.
 1. If the `env` variable is `PROD`, the api-gateway will read the config file for the URL of each services (The URL in sample file are for docker configuration). Anything else as `env` will result in api-gateway using `localhost` for each services.
+1. The `appOrigin` variable should point to where your frontend is running. Default value is `http://localhost:3000`
 1. Using the Auth0 Application created, enter the `domain`, `clientId` and `audience` respectively into the `config.json` file.
     1. The `audience` should be the API URL to `Auth0 Management API`.
 
