@@ -70,7 +70,8 @@ If you would like to run each services individually, you may go into the service
 6. Create your own user in Auth0 (Auth0 -> user management -> create user)
 7. Using the user you created in Auth0, enter the `USER_NAME` and `PASSWORD` respectively into the `.env` file.
 8. Run service using `node populateQuestions.js` and wait about 1 minute. Upon successful you should see a log message similar to the one below:
-[! populateQuestion output](diagrams/populate_question_output.jpg)
+
+![populateQuestion output](diagrams/populate_question_output.jpg)
 
 ## Setup Frontend
 1. Rename `config-sample.json` file to `config.json`.
