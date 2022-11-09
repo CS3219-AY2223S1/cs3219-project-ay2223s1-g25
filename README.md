@@ -46,6 +46,7 @@ docker-compose up --build -d
 ```
 This will bring up the docker containers for the backend.
 
+### Setting Up backend without docker
 If you would like to run each services individually, you may go into the service and run:
 1. Install npm packages using `npm i`.
 1. Run service using `npm start`.
