@@ -1,0 +1,11 @@
+{
+  "env": "PROD",
+  "domain": "XXX",
+  "clientId": "XXX",
+  "audience": "XXX",
+  "collabService": "http://collab-service:4001", 
+  "chatService": "http://chat-service:5001",
+  "questionService": "http://question-service:6001",
+  "matchingService": "http://matching-service:8001",
+  "appOrigin": "http://localhost:3000"
+}

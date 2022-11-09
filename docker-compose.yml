@@ -1,0 +1,20 @@
+version: "3.8"
+services:
+    matching-service:
+        build:
+            context: ./matching-service
+    chat-service:
+        build:
+            context: ./chat-service
+    collab-service:
+        build:
+            context: ./collab-service
+    question-service:
+        build:
+            context: ./question-service
+    api-gateway:
+        restart: always
+        build:
+            context: ./api-gateway
+        ports:
+            - "3001:3001"

@@ -1,0 +1,49 @@
+code {
+    color: #546e7a;
+    background-color: #f7f9fa;
+    padding: 2px 4px;
+    font-size: 13px;
+    border-radius: 3px;
+    font-family: monospace;
+}
+
+body {
+   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.questionContainer {
+    flex-direction: column;
+    width: 40vw;
+}
+
+.question {
+    overflow-wrap: break-word;
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.question pre {
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    background: #f7f9fa;
+    padding: 12px 15px;
+    color: #263238;
+    line-height: 1.6;
+    font-size: 13px;
+    border-radius: 3px;
+}
+
+pre {
+    margin-top: 0;
+    margin-bottom: 1em;
+    overflow: auto;
+}
+
+.question img {
+    padding: 0 0 20px;
+}
+
+@media only screen and (max-width: 1000px) {
+    .questionContainer {
+        width: 80vw;
+    }
+}

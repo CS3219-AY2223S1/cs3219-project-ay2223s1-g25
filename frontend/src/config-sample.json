@@ -1,0 +1,7 @@
+{
+  "domain": "XXX",
+  "clientId": "XXX",
+  "audience": "XXX",
+  "scope": "read:current_user",
+  "API_URL": "http://localhost:3001"
+}

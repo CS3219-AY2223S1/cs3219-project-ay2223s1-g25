@@ -1,0 +1,6 @@
+{
+  "domain": "XXX",
+  "clientId": "XXX",
+  "audience": "XXX",
+  "API_URL": "http://localhost:3001"
+}

@@ -1,0 +1,27 @@
+.chip {
+    color: white !important;
+    margin-right: 6px;
+}
+
+.Easy {
+    background-color: green !important;
+}
+.Medium {
+    background-color: orange !important;
+}
+.Hard {
+    background-color: orangered !important;
+}
+
+.Algorithms {
+    background-color: purple !important;
+}
+.Database { 
+    background-color: darkblue !important;
+}
+.Shell {
+    background-color: darksalmon !important;
+}
+.Concurrency {
+    background-color: royalblue !important;
+}
