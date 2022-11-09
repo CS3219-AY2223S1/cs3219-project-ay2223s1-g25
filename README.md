@@ -13,6 +13,8 @@ To setup our application locally, please follow the instructions below:
             * Allowed Logout URLs
             * Allowed Web Origins
             * Allowed Origins (CORS)
+        1. Under Advanced Settings for the application, ensure that `password` is enabled for `Grants` under the `Grant Types`
+        1. Next, go to Auth0 settings (settings on the left navigation) and under the general tab, scroll down to `API Authorization Settings`. Add `Username-Password-Authentication` to `Default Directory`.
 1. Create a [Cloud Atlas](https://account.mongodb.com/account/login/) account 
     1. Create a MongoDB connection
 1. Create a [Redis Labs](https://app.redislabs.com/#/login) account
@@ -59,7 +61,7 @@ If you would like to run each services individually, you may go into the service
 
 **NOTE: Ensure you did not set the `env` in `config.json` in API gateway to `PROD` as that will NOT connect to the services running locally.**
 
-### Populate Question Service
+## Populate Question Service
 1. Rename `config-sample.json` file to `config.json`.
 2. Using the Auth0 Application created, enter the `domain`, `clientId` and `audience` respectively into the `config.json` file.
 3. The `API_URL` variable should point to where your backend is running. Default value is `http://localhost:3001`
@@ -67,7 +69,8 @@ If you would like to run each services individually, you may go into the service
 5. Using the Auth0 Application created, enter the `CLIENT_SECRET` into the `.env` file.
 6. Create your own user in Auth0 (Auth0 -> user management -> create user)
 7. Using the user you created in Auth0, enter the `USER_NAME` and `PASSWORD` respectively into the `.env` file.
-8. Run service using `node populateQuestions.js` and wait about 1 minute.
+8. Run service using `node populateQuestions.js` and wait about 1 minute. Upon successful you should see a log message similar to the one below:
+[! populateQuestion output](diagrams/populate_question_output.jpg)
 
 ## Setup Frontend
 1. Rename `config-sample.json` file to `config.json`.
