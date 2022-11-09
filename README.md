@@ -8,6 +8,11 @@ To setup our application locally, please follow the instructions below:
 1. Install Docker Desktop
 1. Create an [Auth0](https://auth0.com/signup) account
     1. Create an Auth0 Application (Single Page Application (SPA))
+        1. Ensure you add the URL of the frontend (default value http://localhost:3000) to the following:
+            * Allowed Callback URLs
+            * Allowed Logout URLs
+            * Allowed Web Origins
+            * Allowed Origins (CORS)
 1. Create a [Cloud Atlas](https://account.mongodb.com/account/login/) account 
     1. Create a MongoDB connection
 1. Create a [Redis Labs](https://app.redislabs.com/#/login) account
