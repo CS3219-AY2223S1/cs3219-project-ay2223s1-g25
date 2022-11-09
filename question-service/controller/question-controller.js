@@ -48,7 +48,7 @@ export async function createQuestion(req, res) {
         const questionId = req.body.questionId;
         const title = req.body.title;
         const content = req.body.content;
-        const difficulty = req.body.difficulty.toLowerCase();
+        const difficulty = req.body.difficulty;
         const categoryTitle = req.body.categoryTitle;
 
         if (questionId && difficulty && title && content && categoryTitle) {
